@@ -1,4 +1,5 @@
 *ipynb_checkpoints*
 *.ipynb
 *SWARM*
+utils/data_info.py
 *__pycache__*
