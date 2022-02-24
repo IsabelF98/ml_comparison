@@ -33,7 +33,7 @@ os.system('if [ ! -d ../derivatives/LE ]; then mkdir ../derivatives/LE; fi')
 n = 3 # number of dimensions
 os.system('echo "#swarm -f ./LE_embedding.SWARM.sh -g 30 -t 30 --time 8:00:00 --logdir ../logs/LE_embedding.logs" > ./LE_embedding.SWARM.sh')
 for SBJ in SBJ_list:
-    for k in [5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,120,130,140,150,160,170,180,190,200]:
+    for k in [35,40,45,50,55,60,65,70,75,80,85,90,95,100,110,120,130,140,150,160,170,180,190,200]:
         for metric in ['correlation', 'cosine', 'euclidean']:
             os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} k={k} n={n} metric={metric}; sh ./LE_embedding.sh" >> ./LE_embedding.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, k=k, n=n, metric=metric))
 
