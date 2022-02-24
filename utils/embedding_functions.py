@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # Isabel Fernandez 02/22/2022
 
 # This file contains the functions used to compute the lower dimension embeddings
@@ -5,7 +6,7 @@
 # 2. T-SNE
 # 3. UMAP
 
-from sklearn.manifold  import SpectralEmbedding
+from sklearn.manifold  import SpectralEmbedding, TSNE
 from sklearn.neighbors import kneighbors_graph
 from scipy.spatial.distance import correlation, cosine, euclidean
 import pandas as pd
@@ -27,7 +28,7 @@ def Laplacain_Eigenmap(data_df,k,n,metric):
     data_df: (pd.DataFrame) data which you are dimensionally reducing
     k: (int) k value for k-Nearest Neighboor affinity matrix
     n: (int) number of dimensions you are reducing your data to
-    metric: (str) distance metric you are using to construct affinity matrix (correlation, cosine, euclidean)
+    metric: (str) distance metric you are using to construct distance matrix (correlation, cosine, euclidean)
     
     OUTPUTS
     -------
@@ -52,3 +53,41 @@ def Laplacain_Eigenmap(data_df,k,n,metric):
     LE_data[[str(i)+'_norm' for i in range(1,n+1)]] = LE_data[[str(i) for i in range(1,n+1)]]/LE_data[[str(i) for i in range(1,n+1)]].max()
 
     return LE_data
+
+
+def T_Stochastic_Neighbor_Embedding(data_df,p,n,metric):
+    """
+    This function computes the lower dimensional embedding of data using the T-distribution Stochastic Neighbor Embedding algorithum.
+    1) Sets up the TSNE transformation
+    2) Distance matrix
+    4) Transform data
+    5) Normalize transofred data
+    
+    INPUTS
+    ------
+    data_df: (pd.DataFrame) data which you are dimensionally reducing
+    p: (int) perplexity value
+    n: (int) number of dimensions you are reducing your data to
+    metric: (str) distance metric you are using to construct distance matrix (correlation, cosine, euclidean)
+    
+    OUTPUTS
+    -------
+    TSNE_data: (pd.DataFrame) dimensionaly reduced data (both original and normalized)
+               Columns are labeld as dimesnsion number X. Normalized dimensions are label as 'X_norm'.
+    """
+    
+    # Compute Embedding
+    seed      = np.random.RandomState(seed=3) # Initialization seed
+    embedding = TSNE(n_components=n, perplexity=p, metric=metric, n_jobs=32, random_state=seed, square_distances=True) # Transformation
+    data_transformed = embedding.fit_transform(data_df.to_numpy()) # Transform data
+    
+    # Embedding data frame
+    TSNE_data = pd.DataFrame(columns=[[str(i) for i in range(1,n+1)]]) # Empty data frame
+    # Add TSNE data to data frame
+    for i in range(1,n+1):
+        TSNE_data[str(i)] = data_transformed[:,i-1]
+
+    # Normalize data
+    TSNE_data[[str(i)+'_norm' for i in range(1,n+1)]] = TSNE_data[[str(i) for i in range(1,n+1)]]/TSNE_data[[str(i) for i in range(1,n+1)]].max()
+
+    return TSNE_data
