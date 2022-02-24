@@ -19,37 +19,38 @@ def run(args):
     wl_sec = args.window_length_sec
     tr     = args.time_resolution
     ws_trs = args.window_space_tr
-    print('++INFO: Run information')
-    print('        SBJ:',SBJ)
-    print('        wl_sec:',wl_sec)
-    print('        tr:    ',tr)
-    print('        ws_trs:',ws_trs)
+    print(' ')
+    print('++ INFO: Run information')
+    print('         SBJ:   ',SBJ)
+    print('         wl_sec:',wl_sec)
+    print('         tr:    ',tr)
+    print('         ws_trs:',ws_trs)
     print(' ')
     
     # Load ROI time series
     # --------------------
-    ROI_ts = load_task_ROI_TS(DATADIR,SBJ, wl_sec) # USE YOUR OWN FUNCTION TO LOAD ROI TIME SERIES AS PD.DATAFRAME
-    print('++INFO: ROI time series loaded')
-    print('        Data shape:',ROI_ts.shape)
+    ROI_ts = load_task_ROI_TS(DATADIR,SBJ, wl_sec) # USE YOUR OWN FUNCTION TO LOAD ROI TIME SERIES AS PD.DATAFRAME (TRxROI)
+    print('++ INFO: ROI time series loaded')
+    print('         Data shape:',ROI_ts.shape)
     print(' ')
     
     # Compute SWC matrix
     # ------------------
     wl_trs = int(wl_sec/tr)
-    window = np.ones((WL_trs,))
-    swc_r, swc_Z, winInfo = compute_swc(pca_df,wl_trs,ws_trs,window=window)
+    window = np.ones((wl_trs,))
+    swc_r, swc_Z, winInfo = compute_SWC(ROI_ts,wl_trs,ws_trs,window=window)
     SWC_df = swc_Z.reset_index(drop=True).T
-    print('++INFO: SWC matrix computed')
-    print('        Data shape:',SWC_df.shape)
+    print('++ INFO: SWC matrix computed')
+    print('         Data shape:',SWC_df.shape)
     print(' ')
     
     # Save file to outside directory
     # ------------------------------
     out_file = SBJ+'_SWC_matrix_wl'+str(wl_sec).zfill(3)+'.csv'
-    out_path = osp.join(PRJADIR,'derivative','SWC',out_file)
+    out_path = osp.join(PRJDIR,'derivatives','SWC',out_file)
     SWC_df.to_csv(out_path, index=False)
-    print('++INFO: Data saved to')
-    print('      ',out_path)
+    print('++ INFO: Data saved to')
+    print('       ',out_path)
     
 def main():
     parser=argparse.ArgumentParser(description="Compute sliding window correlation matrix.")

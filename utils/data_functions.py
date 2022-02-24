@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # Isabel Fernandez 02/22/2022
 
 # This file contains functional that computes the sliding window correlation matrix.

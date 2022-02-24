@@ -9,7 +9,7 @@ echo "++ Activating miniconda"
 
 # Activate vigilance environment
 echo "++ Activating rapidtide environment"
-conda activate ${conds_env}
+conda activate ${conda_env}
 
 # Run the program
-./SWC_matrix.py -sbj ${SBJ} -wl_sec ${wl_sec} -tr ${tr} -ws_trs ${ws_trs}
+python ./SWC_matrix.py -sbj ${SBJ} -wl_sec ${wl_sec} -tr ${tr} -ws_trs ${ws_trs}
