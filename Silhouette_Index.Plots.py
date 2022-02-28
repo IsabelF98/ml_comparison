@@ -20,7 +20,7 @@
 import pandas as pd
 import numpy as np
 import os.path as osp
-from utils.data_info import PRJDIR, wl_sec, tr, SBJ_list, task_labels
+from utils.data_info import PRJDIR, k_list, p_list, wl_sec, tr, SBJ_list, task_labels
 import matplotlib.pyplot as plt
 import holoviews as hv
 import panel as pn
@@ -46,5 +46,33 @@ avg_group_SI = pd.concat([all_SBJ_SI[SBJ] for SBJ in SBJ_list]).groupby(level=0)
 sem_group_SI = pd.concat([all_SBJ_SI[SBJ] for SBJ in SBJ_list]).groupby(level=0).sem()  # Standerd Error
 
 # +
-# Plot data
-# ---------
+# Plot data frame
+# ---------------
+if embedding == 'LE':
+    plot_df = pd.DataFrame(k_list,columns=['k-NN value'])  
+elif embedding == 'TSNE':
+    plot_df = pd.DataFrame(p_list,columns=['perplexity value'])
+    
+for metric in ['correlation','cosine','euclidean']:
+    plot_df[metric] = avg_group_SI[metric].copy()
+    plot_df[metric+' +SE'] = avg_group_SI[metric] + sem_group_SI[metric]
+    plot_df[metric+' -SE'] = avg_group_SI[metric] - sem_group_SI[metric]
+
+# +
+# Plot
+# ----
+if embedding == 'LE':
+    x_axis = 'k-NN value' 
+elif embedding == 'TSNE':
+    x_axis = 'perplexity value'
+
+((hv.Area((plot_df[x_axis], plot_df['correlation +SE'], plot_df['correlation -SE']), vdims=['correlation +SE', 'correlation -SE']).opts(alpha=0.3)*\
+hv.Points(plot_df, kdims=[x_axis,'correlation'], label='correlation'))*\
+(hv.Area((plot_df[x_axis], plot_df['cosine +SE'], plot_df['cosine -SE']), vdims=['cosine +SE', 'cosine -SE']).opts(alpha=0.3)*\
+hv.Points(plot_df, kdims=[x_axis,'cosine'], label='cosine'))*\
+(hv.Area((plot_df[x_axis], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
+hv.Points(plot_df, kdims=[x_axis,'euclidean'], label='euclidean')))\
+.opts(width=700, height=500, xlabel=x_axis, ylabel='Average Silhouette Index',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14})
+# -
+
+
