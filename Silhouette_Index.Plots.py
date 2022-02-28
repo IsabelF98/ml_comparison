@@ -20,7 +20,7 @@
 import pandas as pd
 import numpy as np
 import os.path as osp
-from utils.data_info import PRJDIR, k_list, p_list, wl_sec, tr, SBJ_list, task_labels
+from utils.data_info import PRJDIR, LE_k_list, p_list, UMAP_k_list, wl_sec, tr, SBJ_list, task_labels
 import matplotlib.pyplot as plt
 import holoviews as hv
 import panel as pn
@@ -49,7 +49,7 @@ sem_group_SI = pd.concat([all_SBJ_SI[SBJ] for SBJ in SBJ_list]).groupby(level=0)
 # Plot data frame
 # ---------------
 if embedding == 'LE':
-    plot_df = pd.DataFrame(k_list,columns=['k-NN value'])  
+    plot_df = pd.DataFrame(LE_k_list,columns=['k-NN value'])  
 elif embedding == 'TSNE':
     plot_df = pd.DataFrame(p_list,columns=['perplexity value'])
     

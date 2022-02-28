@@ -19,7 +19,7 @@
 
 import os
 import os.path as osp
-from utils.data_info import PRJDIR, k_list, conda_loc, conda_env, SBJ_list, wl_sec, tr
+from utils.data_info import PRJDIR, LE_k_list, conda_loc, conda_env, SBJ_list, wl_sec, tr
 
 # Create logs directory if doesnt already exist
 os.system('if [ ! -d ../logs ]; then mkdir ../logs; fi')
@@ -33,7 +33,7 @@ os.system('if [ ! -d ../derivatives/LE ]; then mkdir ../derivatives/LE; fi')
 n = 3 # number of dimensions
 os.system('echo "#swarm -f ./LE_embedding.SWARM.sh -g 30 -t 30 --time 8:00:00 --logdir ../logs/LE_embedding.logs" > ./LE_embedding.SWARM.sh')
 for SBJ in SBJ_list:
-    for k in k_list:
+    for k in LE_k_list:
         for metric in ['correlation', 'cosine', 'euclidean']:
             os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} k={k} n={n} metric={metric}; sh ./LE_embedding.sh" >> ./LE_embedding.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, k=k, n=n, metric=metric))
 

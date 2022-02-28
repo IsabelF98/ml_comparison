@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 import os.path as osp
 from sklearn.metrics import silhouette_score
-from utils.data_info import PRJDIR, k_list, p_list, task_labels
+from utils.data_info import PRJDIR, LE_k_list, p_list, UMAP_k_list, task_labels
 
 def run(args):
     SBJ       = args.subject
@@ -35,10 +35,10 @@ def run(args):
     
     dist_metric_list = ['correlation', 'cosine', 'euclidean']
     if embedding == 'LE':
-        SI_df = pd.DataFrame(index=k_list, columns=dist_metric_list)
+        SI_df = pd.DataFrame(index=LE_k_list, columns=dist_metric_list)
         for metric in dist_metric_list:
             SI_list = []
-            for k in k_list:
+            for k in LE_k_list:
                 file_name = SBJ+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
                 file_path = osp.join(PRJDIR,'derivatives','LE',file_name)
                 embed_df  = pd.read_csv(file_path)
