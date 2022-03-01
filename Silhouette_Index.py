@@ -31,7 +31,7 @@ def run(args):
     print('         Data shape:',task_df.shape)
     print(' ')
     
-    n = 3
+    n = 3 # Number of dimensions
     
     dist_metric_list = ['correlation', 'cosine', 'euclidean']
     if embedding == 'LE':
@@ -54,6 +54,19 @@ def run(args):
             for p in p_list:
                 file_name = SBJ+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
                 file_path = osp.join(PRJDIR,'derivatives','TSNE',file_name)
+                embed_df  = pd.read_csv(file_path)  
+                silh_idx = silhouette_score(embed_df[['1_norm', '2_norm', '3_norm']], task_df['Task'].values)
+                SI_list.append(silh_idx)
+            SI_df[metric] = SI_list
+            print('++ INFO: SIs computed for',metric)
+            
+    elif embedding == 'UMAP':
+        SI_df = pd.DataFrame(index=UMAP_k_list, columns=dist_metric_list)
+        for metric in dist_metric_list:
+            SI_list = []
+            for k in UMAP_k_list:
+                file_name = SBJ+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+                file_path = osp.join(PRJDIR,'derivatives','UMAP',file_name)
                 embed_df  = pd.read_csv(file_path)  
                 silh_idx = silhouette_score(embed_df[['1_norm', '2_norm', '3_norm']], task_df['Task'].values)
                 SI_list.append(silh_idx)
