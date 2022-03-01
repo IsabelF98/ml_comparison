@@ -29,7 +29,7 @@ hv.extension('bokeh')
 # +
 # Load Silhouette Index Data
 # --------------------------
-embedding = 'LE'
+embedding = 'UMAP' # CHOOSE EMBEDDING ('LE', 'TSNE', or 'UMAP')
 all_SBJ_SI = {}
 
 for SBJ in SBJ_list:
@@ -52,6 +52,8 @@ if embedding == 'LE':
     plot_df = pd.DataFrame(LE_k_list,columns=['k-NN value'])  
 elif embedding == 'TSNE':
     plot_df = pd.DataFrame(p_list,columns=['perplexity value'])
+elif embedding == 'UMAP':
+    plot_df = pd.DataFrame(UMAP_k_list,columns=['k-NN value'])
     
 for metric in ['correlation','cosine','euclidean']:
     plot_df[metric] = avg_group_SI[metric].copy()
@@ -61,7 +63,7 @@ for metric in ['correlation','cosine','euclidean']:
 # +
 # Plot
 # ----
-if embedding == 'LE':
+if embedding == 'LE' or embedding == 'UMAP':
     x_axis = 'k-NN value' 
 elif embedding == 'TSNE':
     x_axis = 'perplexity value'
@@ -74,5 +76,4 @@ hv.Points(plot_df, kdims=[x_axis,'cosine'], label='cosine'))*\
 hv.Points(plot_df, kdims=[x_axis,'euclidean'], label='euclidean')))\
 .opts(width=700, height=500, xlabel=x_axis, ylabel='Average Silhouette Index',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14})
 # -
-
 
