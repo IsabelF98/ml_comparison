@@ -4,7 +4,7 @@
 This repository contains files that are used for the Frontier paper on manifold learning techniques and fMRI data. We will be comparing three different manifold learning techniques, Laplacian Eigenmaps, T-SNE, and UMAP. The techniques are applied to dynamic functional connectivity human brain fMRI data, in hopes of capturing shifts in externally imposed cognitive states through dimensionality reduction. In the paper we explore heuristics for choosing technique hyperparameter values, the intrinsic dimension of the data, and techniques for combining data across subjects.
 
 ## Repository Set Up
-There are X sections to this repository\
+There are X sections to this repository
 1) Dynamic Functional Connectivity
 2) Laplacian Eigenmap
 3) T-SNE
