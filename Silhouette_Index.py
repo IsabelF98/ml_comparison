@@ -81,7 +81,7 @@ def run(args):
     # ------------------------------
     out_file = SBJ+'_Silh_Idx_'+embedding+'_wl'+str(wl_sec).zfill(3)+'.csv'
     out_path = osp.join(PRJDIR,'derivatives','Silh_Idx',out_file)
-    SI_df.to_csv(out_path, index=False)
+    SI_df.to_csv(out_path, index=True)
     print('++ INFO: Data saved to')
     print('       ',out_path)
 
