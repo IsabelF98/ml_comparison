@@ -69,3 +69,30 @@ def compute_SWC(ts,wl_trs,ws_trs,win_names=None,window=None):
     swc_Z = swc_r.apply(np.arctanh)
     
     return swc_r, swc_Z, winInfo
+
+# Randomize Connections for Null Data
+# -----------------------------------
+def randomize_conn(SWC_df):
+    """
+    This function randomwizes the connections in each window for a sliding window connectivity matrix.
+    This function uses the numpy function np.random.shuffle() to randomize the connection order.
+    Note that since the np.random.shuffle() is random the function will output a different SWC even with 
+    the same SWC matrix as input.
+       
+    INPUTS
+    ------
+    SWC_df: (pd.DataFrame) sliding window connectivity
+    
+    OUTPUTS
+    -------
+    null_SWC_df: (pd.DataFrame) Null sliding window connectivity with randomized connection order
+    """
+    
+    Nwin, Nconn = SWC_df.shape # Save number of windows and connections in SWC matrix
+    null_SWC_df = pd.DataFrame() # Empty data frame for null data
+    for col in range(0,Nconn): # For each column in the data
+        col_arr                = SWC_df[str(col)].copy().values # Copy the connection values in a given colum as a numpy array col_arr
+        np.random.shuffle(col_arr) # Shuffle the connection values in the array
+        null_SWC_df[str(col)] = col_arr # Save the shuffled array in null data data frame
+    
+    return null_SWC_df
