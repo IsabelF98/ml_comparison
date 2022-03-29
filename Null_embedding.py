@@ -4,7 +4,7 @@
 # This file computes embeddings using each techniques (LE, TSNE, UMAP) on null data
 # 1) Load sliding window correlation matrix
 # 2) Drop inbetween task windows
-# 3) Compute null data (randomize connections or Dan's method)
+# 3) Compute null data (shuffle or phase)
 # 4) Compute embeddings
 # 5) Save files
 
@@ -61,8 +61,7 @@ def run(args):
     
     # Compute null data
     # -----------------
-    if null == 'randomize_conn':
-        null_SWC_df = randomize_conn(drop_SWC_df)
+    null_SWC_df = randomize_conn(drop_SWC_df, null)
     print('++ INFO: Null data computed')
     print('         Data shape:',null_SWC_df.shape)
     print(' ')
@@ -77,7 +76,7 @@ def run(args):
     
     # Save LE file to outside directory
     # ---------------------------------
-    out_file = SBJ+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    out_file = SBJ+'_Null'+null+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
     out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
     LE_df.to_csv(out_path, index=False)
     print('++ INFO: LE data saved to')
@@ -93,7 +92,7 @@ def run(args):
     
     # Save file to outside directory
     # ------------------------------
-    out_file = SBJ+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    out_file = SBJ+'_Null'+null+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
     out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
     TSNE_df.to_csv(out_path, index=False)
     print('++ INFO: TSNE data saved to')
@@ -109,7 +108,7 @@ def run(args):
     
     # Save file to outside directory
     # ------------------------------
-    out_file = SBJ+'_Null_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    out_file = SBJ+'_Null'+null+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
     out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
     UMAP_df.to_csv(out_path, index=False)
     print('++ INFO: UMAP data saved to')
@@ -125,7 +124,7 @@ def main():
     parser.add_argument("-UMAP_k",help="UMAP Nearest Neighboor value", dest="UMAP_k", type=int, required=True)
     parser.add_argument("-n", help="number of dimensions", dest="n", type=int, required=True)
     parser.add_argument("-met", help="distance metric (correlation, cosine, euclidean)", dest="metric", type=str, required=True)
-    parser.add_argument("-null", help="Method for comuting null data (randomize_conn or X)", dest="null", type=str, required=True)
+    parser.add_argument("-null", help="Method for comuting null data (shuffle or phase)", dest="null", type=str, required=True)
     parser.set_defaults(func=run)
     args=parser.parse_args()
     args.func(args)

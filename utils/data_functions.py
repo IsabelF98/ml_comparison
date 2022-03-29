@@ -70,18 +70,106 @@ def compute_SWC(ts,wl_trs,ws_trs,win_names=None,window=None):
     
     return swc_r, swc_Z, winInfo
 
+
+# Phase Randomization Function
+# ----------------------------
+# By Dan Handwerker
+def phase_randomize(ts, startbin=1, numbinshift=-1):
+    """
+    Take a time series and phase randomize it
+
+    INPUTS
+    ------
+    ts: A 1D time series
+    With default parameters, all frequencies will be phase randomized
+    
+    This function can also randomize a subset of frequencies
+    startbin: The first frequency bin to randomize. Note 0 is the DC bin
+      which cannot have a phase shift so the minimum value is 1
+    numbinshift: Number of bins to shift. If this is 5 that means frequency bins
+      1 to 6 are shifted. Default = -1, which means randomize everything
+
+    OUTPUTS
+    -------
+    phaserand_ts: The phase shifted time series.
+       NOTE: If there should be a floating-point error's worth of imaginary values
+       in the output. If that's true, then only the real part is returned. If the output
+       is complex (something probably went wrong) this will return complex values.
+    """
+
+
+    #print(f"time series length is {len(ts)}")
+
+    # take the fft and separate it into magnitude & phase
+    ffts = np.fft.fft(ts)
+    mag_ffts = abs(ffts)
+
+    # I originally wrote this code to be able to phase randomize
+    #  only a subset of frequency bins. For that, I need to get
+    #  the phase of each value or retain the phase where I'm not
+    #  randomizing. I'm using cmath.phase for this, which operates 
+    #  on one value at a time. There's probably a numpy function 
+    #  that gets the phase for all complex values (and this math 
+    #  isn't hard to do manually) I was only using this on one 
+    #  times series, but if you're doing this a lot, you'll want 
+    #  to improve this
+    # I've added an if clause that says, if you're randomizing
+    #  everything, then ph_ffts can just be a zero array since it
+    #  will be filled in with random values.
+    ph_ffts = np.zeros(len(ffts))
+    if numbinshift>0 or startbin>1:
+        # cmath.phase 
+        for idx in range(len(ffts)):
+            ph_ffts[idx] = cmath.phase(ffts[idx])
+
+    if numbinshift<0:
+        numbinshift = np.floor((len(ts)-startbin)/2)
+
+    numbinshift = round(numbinshift) # Should already be an integer, but must be int datatype
+
+    if (startbin+numbinshift-1)>(len(ts)/2):
+        raise ValueError(f"startbin {startbin} + numbinshift {numbinshift} must be less than half the number of values in the time series {len(ts)}")
+
+
+    # For phase randomization, if the inverse FFT will results in real rather than
+    #   complex values, then the phase values need to have conjugate symmetry
+    #   I'm calculating random phase values for half of the FFT bins and
+    #   flipping them for the other half
+    randphase = 2*np.pi*np.random.random_sample(size=numbinshift)-np.pi
+    ph_ffts[startbin:(startbin+numbinshift)] =  randphase
+    ph_ffts[(-startbin):(-startbin-numbinshift):(-1)] = -randphase
+    # inverse FFT back to the phase randomized time series
+    cffts = mag_ffts * ( np.cos(ph_ffts) + np.sin(ph_ffts)*1j )
+    phaserand_ts = np.fft.ifft(cffts)
+
+    # Calculate the real/imaginary ratio for the time series
+    # If it's really small, assume this is a floating point error and just return the real part
+    # If it's larger, print a warning and return the complex values
+    ri_ratio = abs(np.imag(phaserand_ts)).mean()/abs(np.real(phaserand_ts)).mean()
+    if ri_ratio < 10e-10:
+        print(f"Ratio of imaginary/real parts of phase shifted ts {ri_ratio}")
+        phaserand_ts_noimag = np.real(np.sign(phaserand_ts))*abs(phaserand_ts)
+        return(phaserand_ts_noimag)
+        
+    else:
+        print(f"Warning: Ratio of imaginary/real parts of phase shifted ts might be too large {ri_ratio}")
+        # Return rts with what might be a non-trivial imaginary part
+        return(phaserand_ts)
+
+
 # Randomize Connections for Null Data
 # -----------------------------------
-def randomize_conn(SWC_df):
+def randomize_conn(SWC_df, null):
     """
     This function randomwizes the connections in each window for a sliding window connectivity matrix.
-    This function uses the numpy function np.random.shuffle() to randomize the connection order.
-    Note that since the np.random.shuffle() is random the function will output a different SWC even with 
-    the same SWC matrix as input.
+    This function uses the numpy function np.random.shuffle() and the phase_randomize() function bellow
+    to randomize the connection order. Note that since the np.random.shuffle() is random the function 
+    will output a different SWC even with the same SWC matrix as input.
        
     INPUTS
     ------
     SWC_df: (pd.DataFrame) sliding window connectivity
+    null: (str, 'shuffle' or 'phase') the method in which you are randomizing connections
     
     OUTPUTS
     -------
@@ -92,7 +180,10 @@ def randomize_conn(SWC_df):
     null_SWC_df = pd.DataFrame() # Empty data frame for null data
     for col in range(0,Nconn): # For each column in the data
         col_arr                = SWC_df[str(col)].copy().values # Copy the connection values in a given colum as a numpy array col_arr
-        np.random.shuffle(col_arr) # Shuffle the connection values in the array
-        null_SWC_df[str(col)] = col_arr # Save the shuffled array in null data data frame
+        if null == 'shuffle':
+            np.random.shuffle(col_arr) # Shuffle the connection values in the array
+        elif null == 'phase':
+            col_arr = phase_randomize(col_arr) # Randomize connection using phase randomization
+        null_SWC_df[str(col)] = col_arr # Save the random array in null data data frame
     
     return null_SWC_df

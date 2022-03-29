@@ -96,19 +96,39 @@ print('         Data shape', orig_LE_SI_df.shape)
 
 # Load null LE embeddings 1
 # -------------------------
-all_null_LE = {}
+null = 'shuffle'
+all_null1_LE = {}
 for SBJ in SBJ_list:
-    file_name  = SBJ+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name  = SBJ+'_Null'+null+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
     file_path  = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_LE_df = pd.read_csv(file_path)
-    all_null_LE[SBJ] = null_LE_df
+    all_null1_LE[SBJ] = null_LE_df
     print('++ INFO: Data loaded for', SBJ)
 
 # Compute group SI
 # ----------------
-null_LE_SI_df = group_SI(all_null_LE, task_df, 'Task')
+null1_LE_SI_df = group_SI(all_null1_LE, task_df, 'Task')
 print('++ INFO: SI data frame computed')
-print('         Data shape', null_LE_SI_df.shape)
+print('         Data shape', null1_LE_SI_df.shape)
+
+# ### Null Data 2
+
+# Load null LE embeddings 2
+# -------------------------
+null = 'phase'
+all_null2_LE = {}
+for SBJ in SBJ_list:
+    file_name  = SBJ+'_Null'+null+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_path  = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
+    null_LE_df = pd.read_csv(file_path)
+    all_null2_LE[SBJ] = null_LE_df
+    print('++ INFO: Data loaded for', SBJ)
+
+# Compute group SI
+# ----------------
+null2_LE_SI_df = group_SI(all_null2_LE, task_df, 'Task')
+print('++ INFO: SI data frame computed')
+print('         Data shape', null2_LE_SI_df.shape)
 
 # ## TSNE SI
 # ***
@@ -139,19 +159,39 @@ print('         Data shape', orig_TSNE_SI_df.shape)
 
 # Load null TSNE embeddings 1
 # ---------------------------
-all_null_TSNE = {}
+null = 'shuffle'
+all_null1_TSNE = {}
 for SBJ in SBJ_list:
-    file_name    = SBJ+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name    = SBJ+'_Null'+null+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
     file_path    = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_TSNE_df = pd.read_csv(file_path)
-    all_null_TSNE[SBJ] = null_TSNE_df
+    all_null1_TSNE[SBJ] = null_TSNE_df
     print('++ INFO: Data loaded for', SBJ)
 
 # Compute group SI
 # ----------------
-null_TSNE_SI_df = group_SI(all_null_TSNE, task_df, 'Task')
+null1_TSNE_SI_df = group_SI(all_null1_TSNE, task_df, 'Task')
 print('++ INFO: SI data frame computed')
-print('         Data shape', null_TSNE_SI_df.shape)
+print('         Data shape', null1_TSNE_SI_df.shape)
+
+# ### Null Data 2
+
+# Load null TSNE embeddings 2
+# ---------------------------
+null = 'phase'
+all_null2_TSNE = {}
+for SBJ in SBJ_list:
+    file_name    = SBJ+'_Null'+null+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_path    = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
+    null_TSNE_df = pd.read_csv(file_path)
+    all_null2_TSNE[SBJ] = null_TSNE_df
+    print('++ INFO: Data loaded for', SBJ)
+
+# Compute group SI
+# ----------------
+null2_TSNE_SI_df = group_SI(all_null2_TSNE, task_df, 'Task')
+print('++ INFO: SI data frame computed')
+print('         Data shape', null2_TSNE_SI_df.shape)
 
 # ## UMAP SI
 # ***
@@ -182,19 +222,39 @@ print('         Data shape', orig_UMAP_SI_df.shape)
 
 # Load null UMAP embeddings 1
 # ---------------------------
-all_null_UMAP = {}
+null = 'shuffle'
+all_null1_UMAP = {}
 for SBJ in SBJ_list:
-    file_name    = SBJ+'_Null_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name    = SBJ+'_Null'+null+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
     file_path    = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_UMAP_df = pd.read_csv(file_path)
-    all_null_UMAP[SBJ] = null_UMAP_df
+    all_null1_UMAP[SBJ] = null_UMAP_df
     print('++ INFO: Data loaded for', SBJ)
 
 # Compute group SI
 # ----------------
-null_UMAP_SI_df = group_SI(all_null_UMAP, task_df, 'Task')
+null1_UMAP_SI_df = group_SI(all_null1_UMAP, task_df, 'Task')
 print('++ INFO: SI data frame computed')
-print('         Data shape', null_UMAP_SI_df.shape)
+print('         Data shape', null1_UMAP_SI_df.shape)
+
+# ### Null Data 2
+
+# Load null UMAP embeddings 2
+# ---------------------------
+null = 'phase'
+all_null2_UMAP = {}
+for SBJ in SBJ_list:
+    file_name    = SBJ+'_Null'+null+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_path    = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
+    null_UMAP_df = pd.read_csv(file_path)
+    all_null2_UMAP[SBJ] = null_UMAP_df
+    print('++ INFO: Data loaded for', SBJ)
+
+# Compute group SI
+# ----------------
+null2_UMAP_SI_df = group_SI(all_null2_UMAP, task_df, 'Task')
+print('++ INFO: SI data frame computed')
+print('         Data shape', null2_UMAP_SI_df.shape)
 
 # ## Silhouette Index Bar Plot
 # ***
@@ -203,11 +263,14 @@ print('         Data shape', null_UMAP_SI_df.shape)
 # ---------------------------
 all_SI_df = pd.DataFrame(index=SBJ_list)
 all_SI_df['LE','Original']   = orig_LE_SI_df['Silhouette Index'].copy()
-all_SI_df['LE','Null 1']     = null_LE_SI_df['Silhouette Index'].copy()
+all_SI_df['LE','Null 1']     = null1_LE_SI_df['Silhouette Index'].copy()
+all_SI_df['LE','Null 2']     = null2_LE_SI_df['Silhouette Index'].copy()
 all_SI_df['TSNE','Original'] = orig_TSNE_SI_df['Silhouette Index'].copy()
-all_SI_df['TSNE','Null 1']   = null_TSNE_SI_df['Silhouette Index'].copy()
+all_SI_df['TSNE','Null 1']   = null1_TSNE_SI_df['Silhouette Index'].copy()
+all_SI_df['TSNE','Null 2']   = null2_TSNE_SI_df['Silhouette Index'].copy()
 all_SI_df['UMAP','Original'] = orig_UMAP_SI_df['Silhouette Index'].copy()
-all_SI_df['UMAP','Null 1']   = null_UMAP_SI_df['Silhouette Index'].copy()
+all_SI_df['UMAP','Null 1']   = null1_UMAP_SI_df['Silhouette Index'].copy()
+all_SI_df['UMAP','Null 2']   = null2_UMAP_SI_df['Silhouette Index'].copy()
 
 all_SI_df
 
@@ -217,14 +280,16 @@ all_SI_df
 SI_stats = pd.DataFrame()
 
 # Data Labels
-SI_stats['Technique']  = np.array(['LE','LE','TSNE','TSNE','UMAP','UMAP'])
-SI_stats['Data']       = np.array(['Original','Null 1','Original','Null 1','Original','Null 1'])
+SI_stats['Technique']  = np.array(['LE','LE','LE','TSNE','TSNE','TSNE','UMAP','UMAP','UMAP'])
+SI_stats['Data']       = np.array(['Original','Null 1','Null 2','Original','Null 1','Null 2','Original','Null 1','Null 2'])
 
 # Mean SI for each technqiues and data
-SI_stats['SI_mean'] = all_SI_df[[('LE','Original'),('LE','Null 1'),('TSNE','Original'),('TSNE','Null 1'),('UMAP','Original'),('UMAP','Null 1')]].mean().values
+SI_stats['SI_mean'] = all_SI_df[[('LE','Original'),('LE','Null 1'),('LE','Null 2'),('TSNE','Original'),('TSNE','Null 1'),('TSNE','Null 2'),
+                                 ('UMAP','Original'),('UMAP','Null 1'),('UMAP','Null 2')]].mean().values
 
 # Computing std for each technqiues and data
-SI_error = all_SI_df[[('LE','Original'),('LE','Null 1'),('TSNE','Original'),('TSNE','Null 1'),('UMAP','Original'),('UMAP','Null 1')]].std().values
+SI_error = all_SI_df[[('LE','Original'),('LE','Null 1'),('LE','Null 2'),('TSNE','Original'),('TSNE','Null 1'),('TSNE','Null 2'),
+                      ('UMAP','Original'),('UMAP','Null 1'),('UMAP','Null 2')]].std().values
 SI_stats['SI+SD'] = SI_stats['SI_mean'].values + SI_error
 SI_stats['SI-SD'] = SI_stats['SI_mean'].values - SI_error
 
@@ -233,7 +298,7 @@ SI_stats
 
 # Bar Plot
 # --------
-SI_bars = hv.Bars(SI_stats, kdims=['Technique', 'Data']).opts(width=600, ylabel='Avg Silhouette Index', xlabel='')
+SI_bars = hv.Bars(SI_stats, kdims=['Technique', 'Data']).opts(width=600, ylabel='Avg Silhouette Index', xlabel='').sort('Data', reverse=True)
 #          hv.ErrorBars(SI_stats, vdims=['SI_mean', 'SI+SD', 'SI-SD'], kdims=['Technique', 'Data']) # Error bars not working
 SI_bars
 
