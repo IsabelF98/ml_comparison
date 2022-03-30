@@ -80,3 +80,20 @@ Data Output Name: {SUBJECT}_Silh_Idx_{EMBEDDING_METHOD}_wl{WINDOW_LENGTH}.csv
 6) The embedding is then saved as a csv file in the *derivatives/Silh_Idx/* directory.\
 
 Note: The silhouette score function is from [sklearn](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.silhouette_score.html).
+
+
+## Null Data
+To test how well the techniques work, we will be "breaking" the data to see how the techniques perform. By breaking the data, we hope that the techniques will no longer cluster the data based on task and lead to low silhouette indices. We will compute the broken data (or the null data as we will refer to it) using two different methods. Method 1 is to shuffle the connections on for each window. Method 2 is to change the phase of the data for each window.\
+File Names: Null_embedding\
+Data Output Name: {SUBJECT}_{EMBEDDING}{NULL}_embedding_wl{WINDOW_LENGTH}_k/p{NEIGHBORS}_n{DIMENSIONS}_{DISTANCE_METRIC}.csv
+
+### Method
+1) The user must first decide which parameter values they wish to use for each embedding. We used the parameter values found to perform best from the previous section (Laplacian Eigenmap: k=50, metric=correlation, TSNE: p=55, metric=correlation, UMAP: k=130, metric=correlation).
+2) Load a given subjects SWC matrix as a pandas data frame *(windows x connections)* from the *derivatives/SWC/*.
+3) Drop any windows that are between tasks. How the SWC matrix is computed, there are windows that will overlap more than one task. We remove these windows, so we focus only on pure task windows. This will bring the number of windows down. For our data, we removed 259 between task windows, and are left with 729 windows.
+4) Compute the null data using method 1 or 2. The data should be the same shape as the original SWC matrix *(windows x connections)*.
+5) We then compute all three embeddings with the hyperparameters defined in step 1. You are left with three embeddings, all with dimensions *(windows x dimensions)*. For our analysis we reduced the data down to 3 dimensions (n=3).
+6) Each embedding is saved as a csv file in the *derivatives/Null_Data/* directory.
+7) In the notebook Null_embedding.Plot.ipynb we plot a bar plot of the average silhouette indices over all subjects for each technique and null method to compare data types.
+
+Note: The shuffle function is from [numpy](https://numpy.org/doc/stable/reference/random/generated/numpy.random.shuffle.html) and method 2 is defined in data_functions.py.
