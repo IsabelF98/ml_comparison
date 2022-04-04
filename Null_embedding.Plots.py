@@ -27,9 +27,6 @@ import os.path as osp
 from sklearn.metrics import silhouette_score
 from utils.data_info import PRJDIR, wl_sec, tr, SBJ_list, task_labels
 import matplotlib.pyplot as plt
-import holoviews as hv
-import panel as pn
-hv.extension('bokeh')
 
 # ## SI Function
 # ***
@@ -256,7 +253,7 @@ null2_UMAP_SI_df = group_SI(all_null2_UMAP, task_df, 'Task')
 print('++ INFO: SI data frame computed')
 print('         Data shape', null2_UMAP_SI_df.shape)
 
-# ## Silhouette Index Bar Plot
+# ## Full Data Frame
 # ***
 
 # Create full data data frame
@@ -272,34 +269,82 @@ all_SI_df['UMAP','Original'] = orig_UMAP_SI_df['Silhouette Index'].copy()
 all_SI_df['UMAP','Null 1']   = null1_UMAP_SI_df['Silhouette Index'].copy()
 all_SI_df['UMAP','Null 2']   = null2_UMAP_SI_df['Silhouette Index'].copy()
 
-all_SI_df
+# ## Silhouette Index Bar Plot
+# ***
 
 # +
-# Mean and Standard Deviation
-# ---------------------------
-SI_stats = pd.DataFrame()
+# Compute mean and std for each data type
+# ---------------------------------------
+orig_SI_mean  = list(all_SI_df[[('LE','Original'),('TSNE','Original'),('UMAP','Original')]].mean().values) # Mean SI for original data
+null1_SI_mean = list(all_SI_df[[('LE','Null 1'),('TSNE','Null 1'),('UMAP','Null 1')]].mean().values) # Mean SI for null 1 data
+null2_SI_mean = list(all_SI_df[[('LE','Null 2'),('TSNE','Null 2'),('UMAP','Null 2')]].mean().values) # Mean SI for null 2 data
 
-# Data Labels
-SI_stats['Technique']  = np.array(['LE','LE','LE','TSNE','TSNE','TSNE','UMAP','UMAP','UMAP'])
-SI_stats['Data']       = np.array(['Original','Null 1','Null 2','Original','Null 1','Null 2','Original','Null 1','Null 2'])
+orig_SI_error  = list(all_SI_df[[('LE','Original'),('TSNE','Original'),('UMAP','Original')]].std().values) # STD SI for original data
+null1_SI_error = list(all_SI_df[[('LE','Null 1'),('TSNE','Null 1'),('UMAP','Null 1')]].std().values) # SID SI for null 1 data
+null2_SI_error = list(all_SI_df[[('LE','Null 2'),('TSNE','Null 2'),('UMAP','Null 2')]].std().values) # SID SI for null 2 data
 
-# Mean SI for each technqiues and data
-SI_stats['SI_mean'] = all_SI_df[[('LE','Original'),('LE','Null 1'),('LE','Null 2'),('TSNE','Original'),('TSNE','Null 1'),('TSNE','Null 2'),
-                                 ('UMAP','Original'),('UMAP','Null 1'),('UMAP','Null 2')]].mean().values
+# +
+# Bar plot with error bars
+# ------------------------
+X = np.arange(3)
+fig, ax = plt.subplots(figsize=(14, 9))
+ax.bar(X + 0.00, null1_SI_mean, yerr=null1_SI_error, ecolor='black', capsize=10, color='g', width=0.25,)
+ax.bar(X + 0.25, null2_SI_mean, yerr=null2_SI_error, ecolor='black', capsize=10, color='r', width=0.25)
+ax.bar(X + 0.50, orig_SI_mean, yerr=orig_SI_error, ecolor='black', capsize=10, color='b', width=0.25)
+ax.set_ylabel('Avg Silhouette Index')
+ax.set_xticks(X)
+ax.set_xticklabels(['LE','TSNE','UMAP'])
+ax.legend(labels=['Null 1', 'Null 2', 'Original'])
 
-# Computing std for each technqiues and data
-SI_error = all_SI_df[[('LE','Original'),('LE','Null 1'),('LE','Null 2'),('TSNE','Original'),('TSNE','Null 1'),('TSNE','Null 2'),
-                      ('UMAP','Original'),('UMAP','Null 1'),('UMAP','Null 2')]].std().values
-SI_stats['SI+SD'] = SI_stats['SI_mean'].values + SI_error
-SI_stats['SI-SD'] = SI_stats['SI_mean'].values - SI_error
-
-SI_stats
+# Save the figure and show
+plt.show()
 # -
 
-# Bar Plot
-# --------
-SI_bars = hv.Bars(SI_stats, kdims=['Technique', 'Data']).opts(width=600, ylabel='Avg Silhouette Index', xlabel='').sort('Data', reverse=True)
-#          hv.ErrorBars(SI_stats, vdims=['SI_mean', 'SI+SD', 'SI-SD'], kdims=['Technique', 'Data']) # Error bars not working
-SI_bars
+# ## T-Test
+# ***
+
+from scipy import stats
+
+data_list = ['Null 1', 'Null 2', 'Original']
+
+technique = 'UMAP'
+T_stat  = np.zeros((len(data_list),len(data_list)))
+P_value = np.zeros((len(data_list),len(data_list)))
+for i in range(len(data_list)):
+    for j in range(len(data_list)):
+        t_stats = stats.ttest_rel(all_SI_df[technique,data_list[i]], all_SI_df[technique,data_list[j]])
+        if i == j:
+            T_stat[i,j]  = np.nan
+            P_value[i,j] = np.nan
+        else:
+            T_stat[i,j]  = t_stats[0]
+            T_stat[j,i]  = t_stats[0]
+            P_value[i,j] = t_stats[1]
+            P_value[j,i] = t_stats[1]
+
+# +
+plot_data = P_value
+
+fig, ax = plt.subplots(figsize=(7, 7))
+im = ax.imshow(plot_data, cmap=plt.cm.Blues)
+
+# Show all ticks and label them with the respective list entries
+ax.set_xticks(np.arange(len(data_list)))
+ax.set_xticklabels(data_list)
+ax.set_yticks(np.arange(len(data_list)))
+ax.set_yticklabels(data_list)
+
+# Rotate the tick labels and set their alignment.
+plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+
+# Loop over data dimensions and create text annotations.
+for i in range(len(data_list)):
+    for j in range(len(data_list)):
+        text = ax.text(j, i, round(plot_data[i, j],4), ha="center", va="center", color="black")
+
+plt.rcParams.update({'font.size': 18})
+fig.tight_layout()
+plt.show()
+# -
 
 
