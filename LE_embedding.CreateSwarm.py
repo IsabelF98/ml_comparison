@@ -30,7 +30,7 @@ os.system('if [ ! -d ../derivatives ]; then mkdir ../derivatives; fi')
 os.system('if [ ! -d ../derivatives/LE ]; then mkdir ../derivatives/LE; fi')
 
 # Create SWARM file
-n = 3 # number of dimensions
+n = 30 # number of dimensions
 os.system('echo "#swarm -f ./LE_embedding.SWARM.sh -g 30 -t 30 --time 8:00:00 --logdir ../logs/LE_embedding.logs" > ./LE_embedding.SWARM.sh')
 for SBJ in SBJ_list:
     for k in LE_k_list:

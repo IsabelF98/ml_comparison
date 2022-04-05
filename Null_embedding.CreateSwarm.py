@@ -13,7 +13,7 @@
 #     name: manifold2
 # ---
 
-# # Silhouette Index
+# # Null Data Embeddings
 #
 # This notebook creates the swarm file to compute embeddings using null data.
 
