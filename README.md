@@ -97,3 +97,17 @@ Data Output Name: {SUBJECT}_{EMBEDDING}{NULL}_embedding_wl{WINDOW_LENGTH}_k/p{NE
 7) In the notebook Null_embedding.Plot.ipynb we plot a bar plot of the average silhouette indices over all subjects for each technique and null method to compare data types.
 
 Note: The shuffle function is from [numpy](https://numpy.org/doc/stable/reference/random/generated/numpy.random.shuffle.html) and method 2 is defined in data_functions.py.
+
+
+## Logistic Regression
+To test how well the techniques work at predicting task labels, we will be using the Logistic Regression classifier. We will be splitting the data into a training and testing set. The classifier generates a set of coefficients for each label (i.e., one label for each task, in our case the four tasks) which we will use to predict the labels of the test data set.\
+File Names: Logistic_Regression\
+Data Output Name:
+
+### Method
+1) After determining which embedding the user wishes to classify, we must first split the data into a training and testing set. For our data, we split the embedding in half where the first half is when the subject performed the initial four tasks (training set), and the second half is when the subject performed the second four tasks (testing set). Both training and testing set contain data corresponding to each task, but the tasks are not performed in the same order. In the end you should have two data sets *(training windows x dimensions)* and *(testing windows x dimensions)*. For our data, there was 364 windows in the training set and 365 windows in the testing set.
+2) Once the data is split, we apply the Logistic Regression classifier to the training data set and get a set of coefficients. There should be a coefficient for each dimension in the embedding and for each label. For example, if we have a 3-dimensional embedding and there are four tasks we will have three coefficients for each of the four tasks. We save the coefficients as a pandas data frame with dimensions *(dimensions x labels)*.
+3) We then apply these coefficients to the testing data set to predict the test data labels. We are then left with a predicted label for each window in the testing data set. We save this as a 1D numpy array.
+4) To test how well the prediction is, we use the sklearn classification report to compare the accuracy of the true test data labels and the predicted labels. The report outputs the precision, recall, and F1 score for each label class as well as for the accuracy, macro average, and weighted average. This is saved as a pandas data frame.
+
+Note: The Logistic Regression function is from [sklearn](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html).
