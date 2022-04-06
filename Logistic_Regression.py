@@ -77,7 +77,7 @@ def run(args):
     # Predict test data
     LE_predicted = LE_Log_Reg.predict(test_LE_df[[str(i)+'_norm' for i in range(1,n+1)]])
     # Classification Report
-    LE_class_report = f"{metrics.classification_report(test_task_df['Task'], LE_predicted)}\n"
+    LE_class_report_df = pd.DataFrame(metrics.classification_report(test_task_df, LE_predicted, output_dict=True)).T
     print('++INFO: LE Logistic Regression classificanion report complete')
     print(LE_class_report)
     print(' ')
@@ -108,7 +108,7 @@ def run(args):
 #    # Predict test data
 #    TSNE_predicted = TSNE_Log_Reg.predict(test_TSNE_df[[str(i)+'_norm' for i in range(1,n+1)]])
 #    # Classification Report
-#    TSNE_class_report = f"{metrics.classification_report(test_task_df['Task'], TSNE_predicted)}\n"
+#    TSNE_class_report_df = pd.DataFrame(metrics.classification_report(test_task_df, TSNE_predicted, output_dict=True)).T
 #    print('++INFO: TSNE Logistic Regression classificanion report complete')
 #    print(TSNE_class_report)
 #    print(' ')
@@ -138,7 +138,7 @@ def run(args):
     # Predict test data
     UMAP_predicted = UMAP_Log_Reg.predict(test_UMAP_df[[str(i)+'_norm' for i in range(1,n+1)]])
     # Classification Report
-    UMAP_class_report = f"{metrics.classification_report(test_task_df['Task'], UMAP_predicted)}\n"
+    UMAP_class_report_df = pd.DataFrame(metrics.classification_report(test_task_df, UMAP_predicted, output_dict=True)).T
     print('++INFO: UMAP Logistic Regression classificanion report complete')
     print(UMAP_class_report)
     print(' ')
