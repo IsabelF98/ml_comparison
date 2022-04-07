@@ -19,13 +19,7 @@
 
 import os
 import os.path as osp
-from utils.data_info import PRJDIR, conda_loc, conda_env, SBJ_list, wl_sec, tr
-
-LE_k   = 50 # Best k-NN value for LE
-p      = 55 # Best perplexity value for TSNE
-UMAP_k = 130 # Best k-NN value for UMAP
-n = 30 # Number of dimesnions for embedding
-metric = 'correlation' # Best distance metric
+from utils.data_info import PRJDIR, conda_loc, conda_env, SBJ_list, LE_k_list, p_list, UMAP_k_list, wl_sec, tr
 
 # Create logs directory if doesnt already exist
 os.system('if [ ! -d ../logs ]; then mkdir ../logs; fi')
@@ -35,9 +29,32 @@ os.system('if [ ! -d ../logs/Logistic_Regression.logs ]; then mkdir ../logs/Logi
 os.system('if [ ! -d ../derivatives ]; then mkdir ../derivatives; fi')
 os.system('if [ ! -d ../derivatives/Log_Reg ]; then mkdir ../derivatives/Log_Reg; fi')
 
+# +
 # Create SWARM file
 os.system('echo "#swarm -f ./Logistic_Regression.SWARM.sh -g 30 -t 30 --time 8:00:00 --logdir ../logs/Logistic_Regression.logs" > ./Logistic_Regression.SWARM.sh')
-for SBJ in SBJ_list:
-    os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} LE_k={LE_k} p={p} UMAP_k={UMAP_k} n={n} metric={metric}; sh ./Logistic_Regression.sh" >> ./Logistic_Regression.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, LE_k=LE_k, p=p, UMAP_k=UMAP_k, n=n, metric=metric))
 
+dist_metric_list = ['correlation', 'cosine', 'euclidean']
+n = 3
+
+# Laplacian Eigenmap
+embedding = 'LE'
+for SBJ in SBJ_list:
+    for k in LE_k_list:
+        for metric in dist_metric_list:
+            os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} kp={kp} n={n} metric={metric} embedding={embedding}; sh ./Logistic_Regression.sh" >> ./Logistic_Regression.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, kp=k, n=n, metric=metric, embedding=embedding))
+            
+# TSNE
+embedding = 'TSNE'
+for SBJ in SBJ_list:
+    for p in p_list:
+        for metric in dist_metric_list:
+            os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} kp={kp} n={n} metric={metric} embedding={embedding}; sh ./Logistic_Regression.sh" >> ./Logistic_Regression.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, kp=p, n=n, metric=metric, embedding=embedding))
+            
+# UMAP
+embedding = 'UMAP'
+for SBJ in SBJ_list:
+    for k in UMAP_k_list:
+        for metric in dist_metric_list:
+            os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} kp={kp} n={n} metric={metric} embedding={embedding}; sh ./Logistic_Regression.sh" >> ./Logistic_Regression.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, kp=k, n=n, metric=metric, embedding=embedding))
+# -
 
