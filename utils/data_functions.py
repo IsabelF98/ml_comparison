@@ -159,31 +159,31 @@ def phase_randomize(ts, startbin=1, numbinshift=-1):
 
 # Randomize Connections for Null Data
 # -----------------------------------
-def randomize_conn(SWC_df, null):
+def randomize_conn(data_df, null):
     """
-    This function randomwizes the connections in each window for a sliding window connectivity matrix.
+    This function randomwizes the connections in each window for a data set (either ROI time series or SWC matrix).
     This function uses the numpy function np.random.shuffle() and the phase_randomize() function bellow
     to randomize the connection order. Note that since the np.random.shuffle() is random the function 
-    will output a different SWC even with the same SWC matrix as input.
+    will output a different null data even with the same input data.
        
     INPUTS
     ------
-    SWC_df: (pd.DataFrame) sliding window connectivity
+    data_df: (pd.DataFrame) data to randomize
     null: (str, 'shuffle' or 'phase') the method in which you are randomizing connections
     
     OUTPUTS
     -------
-    null_SWC_df: (pd.DataFrame) Null sliding window connectivity with randomized connection order
+    null_data_df: (pd.DataFrame) Randomized data
     """
     
-    Nwin, Nconn = SWC_df.shape # Save number of windows and connections in SWC matrix
-    null_SWC_df = pd.DataFrame() # Empty data frame for null data
-    for col in range(0,Nconn): # For each column in the data
-        col_arr                = SWC_df[str(col)].copy().values # Copy the connection values in a given colum as a numpy array col_arr
+    N_x, N_y = data_df.shape # Save number of data points and features
+    null_data_df = pd.DataFrame(columns=data_df.columns) # Empty data frame for null data
+    for idx in range(0,N_x): # For data point
+        data_point_arr = data_df.iloc[idx].copy().values # Copy the connection values in a given colum as a numpy array col_arr
         if null == 'shuffle':
-            np.random.shuffle(col_arr) # Shuffle the connection values in the array
+            np.random.shuffle(data_point_arr) # Shuffle the features values in the array
         elif null == 'phase':
-            col_arr = phase_randomize(col_arr) # Randomize connection using phase randomization
-        null_SWC_df[str(col)] = col_arr # Save the random array in null data data frame
+            data_point_arr = phase_randomize(data_point_arr) # Randomize features using phase randomization
+        null_data_df.loc[len(null_data_df.index)] = data_point_arr # Save the random array in null data frame
     
-    return null_SWC_df
+    return null_data_df
