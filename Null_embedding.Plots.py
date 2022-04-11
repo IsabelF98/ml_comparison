@@ -26,7 +26,9 @@ import numpy as np
 import os.path as osp
 from sklearn.metrics import silhouette_score
 from utils.data_info import PRJDIR, wl_sec, tr, SBJ_list, task_labels
+from statannotations.Annotator import Annotator
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 # ## SI Function
 # ***
@@ -70,6 +72,7 @@ def group_SI(data_dict, label_df, label):
 LE_k   = 50
 n      = 3
 metric = 'correlation'
+data   = 'SWC'
 
 # ### Original Data
 
@@ -96,7 +99,7 @@ print('         Data shape', orig_LE_SI_df.shape)
 null = 'shuffle'
 all_null1_LE = {}
 for SBJ in SBJ_list:
-    file_name  = SBJ+'_Null'+null+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name  = SBJ+'_'+data+'_Null'+null+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
     file_path  = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_LE_df = pd.read_csv(file_path)
     all_null1_LE[SBJ] = null_LE_df
@@ -115,7 +118,7 @@ print('         Data shape', null1_LE_SI_df.shape)
 null = 'phase'
 all_null2_LE = {}
 for SBJ in SBJ_list:
-    file_name  = SBJ+'_Null'+null+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name  = SBJ+'_'+data+'_Null'+null+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
     file_path  = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_LE_df = pd.read_csv(file_path)
     all_null2_LE[SBJ] = null_LE_df
@@ -159,7 +162,7 @@ print('         Data shape', orig_TSNE_SI_df.shape)
 null = 'shuffle'
 all_null1_TSNE = {}
 for SBJ in SBJ_list:
-    file_name    = SBJ+'_Null'+null+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name    = SBJ+'_'+data+'_Null'+null+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
     file_path    = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_TSNE_df = pd.read_csv(file_path)
     all_null1_TSNE[SBJ] = null_TSNE_df
@@ -178,7 +181,7 @@ print('         Data shape', null1_TSNE_SI_df.shape)
 null = 'phase'
 all_null2_TSNE = {}
 for SBJ in SBJ_list:
-    file_name    = SBJ+'_Null'+null+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name    = SBJ+'_'+data+'_Null'+null+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
     file_path    = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_TSNE_df = pd.read_csv(file_path)
     all_null2_TSNE[SBJ] = null_TSNE_df
@@ -222,7 +225,7 @@ print('         Data shape', orig_UMAP_SI_df.shape)
 null = 'shuffle'
 all_null1_UMAP = {}
 for SBJ in SBJ_list:
-    file_name    = SBJ+'_Null'+null+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name    = SBJ+'_'+data+'_Null'+null+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
     file_path    = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_UMAP_df = pd.read_csv(file_path)
     all_null1_UMAP[SBJ] = null_UMAP_df
@@ -241,7 +244,7 @@ print('         Data shape', null1_UMAP_SI_df.shape)
 null = 'phase'
 all_null2_UMAP = {}
 for SBJ in SBJ_list:
-    file_name    = SBJ+'_Null'+null+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name    = SBJ+'_'+data+'_Null'+null+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
     file_path    = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_UMAP_df = pd.read_csv(file_path)
     all_null2_UMAP[SBJ] = null_UMAP_df
@@ -256,48 +259,67 @@ print('         Data shape', null2_UMAP_SI_df.shape)
 # ## Full Data Frame
 # ***
 
-# Create full data data frame
-# ---------------------------
-all_SI_df = pd.DataFrame(index=SBJ_list)
-all_SI_df['LE','Original']   = orig_LE_SI_df['Silhouette Index'].copy()
-all_SI_df['LE','Null 1']     = null1_LE_SI_df['Silhouette Index'].copy()
-all_SI_df['LE','Null 2']     = null2_LE_SI_df['Silhouette Index'].copy()
-all_SI_df['TSNE','Original'] = orig_TSNE_SI_df['Silhouette Index'].copy()
-all_SI_df['TSNE','Null 1']   = null1_TSNE_SI_df['Silhouette Index'].copy()
-all_SI_df['TSNE','Null 2']   = null2_TSNE_SI_df['Silhouette Index'].copy()
-all_SI_df['UMAP','Original'] = orig_UMAP_SI_df['Silhouette Index'].copy()
-all_SI_df['UMAP','Null 1']   = null1_UMAP_SI_df['Silhouette Index'].copy()
-all_SI_df['UMAP','Null 2']   = null2_UMAP_SI_df['Silhouette Index'].copy()
+# Full data frame of SI values
+# ----------------------------
+all_SI_df = pd.DataFrame(columns=['Technique','Data','Silhouette Index'])
+all_SI_df = pd.concat([all_SI_df, pd.DataFrame({'Technique': ['LE' for i in range(orig_LE_SI_df.shape[0])],
+                                                'Data': ['Original' for i in range(orig_LE_SI_df.shape[0])],
+                                                'Silhouette Index': orig_LE_SI_df['Silhouette Index'].values})], ignore_index=True)
+all_SI_df = pd.concat([all_SI_df, pd.DataFrame({'Technique': ['LE' for i in range(null1_LE_SI_df.shape[0])],
+                                                'Data': ['Null 1' for i in range(null1_LE_SI_df.shape[0])],
+                                                'Silhouette Index': null1_LE_SI_df['Silhouette Index'].values})], ignore_index=True)
+all_SI_df = pd.concat([all_SI_df, pd.DataFrame({'Technique': ['LE' for i in range(null2_LE_SI_df.shape[0])],
+                                                'Data': ['Null 2' for i in range(null2_LE_SI_df.shape[0])],
+                                                'Silhouette Index': null2_LE_SI_df['Silhouette Index'].values})], ignore_index=True)
+all_SI_df = pd.concat([all_SI_df, pd.DataFrame({'Technique': ['TSNE' for i in range(orig_TSNE_SI_df.shape[0])],
+                                                'Data': ['Original' for i in range(orig_TSNE_SI_df.shape[0])],
+                                                'Silhouette Index': orig_TSNE_SI_df['Silhouette Index'].values})], ignore_index=True)
+all_SI_df = pd.concat([all_SI_df, pd.DataFrame({'Technique': ['TSNE' for i in range(null1_TSNE_SI_df.shape[0])],
+                                                'Data': ['Null 1' for i in range(null1_TSNE_SI_df.shape[0])],
+                                                'Silhouette Index': null1_TSNE_SI_df['Silhouette Index'].values})], ignore_index=True)
+all_SI_df = pd.concat([all_SI_df, pd.DataFrame({'Technique': ['TSNE' for i in range(null2_TSNE_SI_df.shape[0])],
+                                                'Data': ['Null 2' for i in range(null2_TSNE_SI_df.shape[0])],
+                                                'Silhouette Index': null2_TSNE_SI_df['Silhouette Index'].values})], ignore_index=True)
+all_SI_df = pd.concat([all_SI_df, pd.DataFrame({'Technique': ['UMAP' for i in range(orig_UMAP_SI_df.shape[0])],
+                                                'Data': ['Original' for i in range(orig_UMAP_SI_df.shape[0])],
+                                                'Silhouette Index': orig_UMAP_SI_df['Silhouette Index'].values})], ignore_index=True)
+all_SI_df = pd.concat([all_SI_df, pd.DataFrame({'Technique': ['UMAP' for i in range(null1_UMAP_SI_df.shape[0])],
+                                                'Data': ['Null 1' for i in range(null1_UMAP_SI_df.shape[0])],
+                                                'Silhouette Index': null1_UMAP_SI_df['Silhouette Index'].values})], ignore_index=True)
+all_SI_df = pd.concat([all_SI_df, pd.DataFrame({'Technique': ['UMAP' for i in range(null2_UMAP_SI_df.shape[0])],
+                                                'Data': ['Null 2' for i in range(null2_UMAP_SI_df.shape[0])],
+                                                'Silhouette Index': null2_UMAP_SI_df['Silhouette Index'].values})], ignore_index=True)
 
 # ## Silhouette Index Bar Plot
 # ***
 
 # +
-# Compute mean and std for each data type
-# ---------------------------------------
-orig_SI_mean  = list(all_SI_df[[('LE','Original'),('TSNE','Original'),('UMAP','Original')]].mean().values) # Mean SI for original data
-null1_SI_mean = list(all_SI_df[[('LE','Null 1'),('TSNE','Null 1'),('UMAP','Null 1')]].mean().values) # Mean SI for null 1 data
-null2_SI_mean = list(all_SI_df[[('LE','Null 2'),('TSNE','Null 2'),('UMAP','Null 2')]].mean().values) # Mean SI for null 2 data
+# Bar plot with error bars and stars
+# ----------------------------------
+x = 'Technique'
+y = 'Silhouette Index'
+hue = 'Data'
+hue_order=['Null 1', 'Null 2', 'Original']
+order = ['LE','TSNE','UMAP']
+pairs=[
+    (("LE", "Null 1"), ("LE", "Original")),
+    (("LE", "Null 2"), ("LE", "Original")),
+    (("TSNE", "Null 1"), ("TSNE", "Original")),
+    (("TSNE", "Null 2"), ("TSNE", "Original")),
+    (("UMAP", "Null 1"), ("UMAP", "Original")),
+    (("UMAP", "Null 2"), ("UMAP", "Original")),
+    (("LE", "Original"), ("TSNE", "Original")),
+    (("TSNE", "Original"), ("UMAP", "Original")),
+    (("UMAP", "Original"), ("LE", "Original")),
+    ]
 
-orig_SI_error  = list(all_SI_df[[('LE','Original'),('TSNE','Original'),('UMAP','Original')]].std().values) # STD SI for original data
-null1_SI_error = list(all_SI_df[[('LE','Null 1'),('TSNE','Null 1'),('UMAP','Null 1')]].std().values) # SID SI for null 1 data
-null2_SI_error = list(all_SI_df[[('LE','Null 2'),('TSNE','Null 2'),('UMAP','Null 2')]].std().values) # SID SI for null 2 data
-
-# +
-# Bar plot with error bars
-# ------------------------
-X = np.arange(3)
-fig, ax = plt.subplots(figsize=(14, 9))
-ax.bar(X + 0.00, null1_SI_mean, yerr=null1_SI_error, ecolor='black', capsize=10, color='g', width=0.25,)
-ax.bar(X + 0.25, null2_SI_mean, yerr=null2_SI_error, ecolor='black', capsize=10, color='r', width=0.25)
-ax.bar(X + 0.50, orig_SI_mean, yerr=orig_SI_error, ecolor='black', capsize=10, color='b', width=0.25)
-ax.set_ylabel('Avg Silhouette Index')
-ax.set_xticks(X)
-ax.set_xticklabels(['LE','TSNE','UMAP'])
-ax.legend(labels=['Null 1', 'Null 2', 'Original'])
-
-# Save the figure and show
-plt.show()
+sns.set(rc = {'figure.figsize':(14,7)})
+ax    = sns.barplot(x=x, y=y, hue=hue, data=all_SI_df, order=order, hue_order=hue_order, capsize=0.1)
+annot = Annotator(ax, pairs, data=all_SI_df, x=x, y=y, hue=hue, order=order, hue_order=hue_order)
+annot.configure(test='t-test_paired', verbose=2)
+annot.apply_test()
+annot.annotate()
+plt.legend(loc='upper left', bbox_to_anchor=(1.03, 1))
 # -
 
 # ## T-Test
@@ -345,6 +367,3 @@ for i in range(len(data_list)):
 plt.rcParams.update({'font.size': 18})
 fig.tight_layout()
 plt.show()
-# -
-
-
