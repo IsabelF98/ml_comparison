@@ -83,18 +83,19 @@ Note: The silhouette score function is from [sklearn](https://scikit-learn.org/s
 
 
 ## Null Data
-To test how well the techniques work, we will be "breaking" the data to see how the techniques perform. By breaking the data, we hope that the techniques will no longer cluster the data based on task and lead to low silhouette indices. We will compute the broken data (or the null data as we will refer to it) using two different methods. Method 1 is to shuffle the connections on for each window. Method 2 is to change the phase of the data for each window.\
+To test how well the techniques work, we will be "breaking" the data to see how the techniques perform. By breaking the data, we hope that the techniques will no longer cluster the data based on task and lead to low silhouette indices. We will compute the broken data (or the null data as we will refer to it) using two different methods. Method 1 is to shuffle the connections for each window. Method 2 is to change the phase of the data for each window.\
 File Names: Null_embedding\
-Data Output Name: {SUBJECT}_{EMBEDDING}{NULL}_embedding_wl{WINDOW_LENGTH}_k/p{NEIGHBORS}_n{DIMENSIONS}_{DISTANCE_METRIC}.csv
+Data Output Name: {SUBJECT}_{DATA}_{EMBEDDING}{NULL}_embedding_wl{WINDOW_LENGTH}_k/p{NEIGHBORS}_n{DIMENSIONS}_{DISTANCE_METRIC}.csv
 
 ### Method
-1) The user must first decide which parameter values they wish to use for each embedding. We used the parameter values found to perform best from the previous section (Laplacian Eigenmap: k=50, metric=correlation, TSNE: p=55, metric=correlation, UMAP: k=130, metric=correlation).
-2) Load a given subjects SWC matrix as a pandas data frame *(windows x connections)* from the *derivatives/SWC/*.
-3) Drop any windows that are between tasks. How the SWC matrix is computed, there are windows that will overlap more than one task. We remove these windows, so we focus only on pure task windows. This will bring the number of windows down. For our data, we removed 259 between task windows, and are left with 729 windows.
-4) Compute the null data using method 1 or 2. The data should be the same shape as the original SWC matrix *(windows x connections)*.
-5) We then compute all three embeddings with the hyperparameters defined in step 1. You are left with three embeddings, all with dimensions *(windows x dimensions)*. For our analysis we reduced the data down to 3 dimensions (n=3).
-6) Each embedding is saved as a csv file in the *derivatives/Null_Data/* directory.
-7) In the notebook Null_embedding.Plot.ipynb we plot a bar plot of the average silhouette indices over all subjects for each technique and null method to compare data types.
+1) The user must first decide which parameter values they wish to use for each embedding. We used the parameter values found to perform best from the silhouette index analysis (Laplacian Eigenmap: k=50, metric=correlation, TSNE: p=55, metric=correlation, UMAP: k=130, metric=correlation).
+2) Load a given subjects ROI time series or SWC matrix as a pandas data frame *(time points x ROIs)* or *(windows x connections)*.
+3) Compute the null data using method 1 or 2. The data should be the same shape as the original input data.
+4) If we are randomizing the ROI time series data we then compute the SWC matrix using the *compute_SWC()* function described in the Dynamic Functional Connectivity section.
+5) Drop any windows that are between tasks. How the SWC matrix is computed, there are windows that will overlap more than one task. We remove these windows, so we focus only on pure task windows. This will bring the number of windows down. For our data, we removed 259 between task windows, and are left with 729 windows.
+6) We then compute all three embeddings with the hyperparameters defined in step 1. You are left with three embeddings, all with dimensions *(windows x dimensions)*. For our analysis we reduced the data down to 3 dimensions (n=3).
+7) Each embedding is saved as a csv file in the *derivatives/Null_Data/* directory.
+8) In the notebook Null_embedding.Plot.ipynb we plot a bar plot of the average silhouette indices over all subjects for each technique and null method to compare data types.
 
 Note: The shuffle function is from [numpy](https://numpy.org/doc/stable/reference/random/generated/numpy.random.shuffle.html) and method 2 is defined in data_functions.py.
 
@@ -102,7 +103,7 @@ Note: The shuffle function is from [numpy](https://numpy.org/doc/stable/referenc
 ## Logistic Regression
 To test how well the techniques work at predicting task labels, we will be using the Logistic Regression classifier. We will be splitting the data into a training and testing set. The classifier generates a set of coefficients for each label (i.e., one label for each task, in our case the four tasks) which we will use to predict the labels of the test data set.\
 File Names: Logistic_Regression\
-Data Output Name:
+Data Output Name: {SUBJECT}_{EMBEDDING_METHOD}_LRcoef_wl{WINDOW_LENGTH}_k/p{NEIGHBORS}_n{DIMENSIONS}_{DISTANCE_METRIC}.csv (Logistic Regression Coefficients) and {SUBJECT}_{EMBEDDING_METHOD}_LRclassrep_wl{WINDOW_LENGTH}_k/p{NEIGHBORS}_n{DIMENSIONS}_{DISTANCE_METRIC}.csv (Classification Report)
 
 ### Method
 1) After determining which embedding the user wishes to classify, we must first split the data into a training and testing set. For our data, we split the embedding in half where the first half is when the subject performed the initial four tasks (training set), and the second half is when the subject performed the second four tasks (testing set). Both training and testing set contain data corresponding to each task, but the tasks are not performed in the same order. In the end you should have two data sets *(training windows x dimensions)* and *(testing windows x dimensions)*. For our data, there was 364 windows in the training set and 365 windows in the testing set.
