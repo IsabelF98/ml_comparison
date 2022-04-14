@@ -90,8 +90,10 @@ def T_Stochastic_Neighbor_Embedding(data_df,p,n,metric):
                      perplexity=p,
                      metric=metric,
                      n_jobs=32,
+                     init='random',
                      random_state=seed,
-                     square_distances=True) # Transformation
+                     square_distances=True,
+                     method='exact') # Transformation
     data_transformed = embedding.fit_transform(data_df.to_numpy()) # Transform data
     
     # Embedding data frame
