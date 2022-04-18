@@ -156,34 +156,58 @@ def phase_randomize(ts, startbin=1, numbinshift=-1):
         # Return rts with what might be a non-trivial imaginary part
         return(phaserand_ts)
 
-
-# Randomize Connections for Null Data
-# -----------------------------------
-def randomize_conn(data_df, null):
+    
+# Randomize ROI time series for Null Data
+# ---------------------------------------
+def randomize_ROI(data_df):
     """
-    This function randomwizes the connections in each window for a data set (either ROI time series or SWC matrix).
-    This function uses the numpy function np.random.shuffle() and the phase_randomize() function bellow
-    to randomize the connection order. Note that since the np.random.shuffle() is random the function 
-    will output a different null data even with the same input data.
-       
+    This function randomwizes the each ROI times series. This function uses the numpy function 
+    phase_randomize() function defined above to randomize to the times series data.
+    
     INPUTS
     ------
-    data_df: (pd.DataFrame) data to randomize
-    null: (str, 'shuffle' or 'phase') the method in which you are randomizing connections
+    data_df: (pd.DataFrame) ROI time seres data to randomize (TRs x ROIs)
     
     OUTPUTS
     -------
-    null_data_df: (pd.DataFrame) Randomized data
+    null_data_df: (pd.DataFrame) Randomized ROI time series data (TRs x ROIs)
     """
     
-    N_x, N_y = data_df.shape # Save number of data points and features
+    N_trs, N_ROIs = data_df.shape # Save number of times points and ROIs
+    null_data_df = pd.DataFrame() # Empty data frame for null data
+    
+    for ROI in list(data_df.columns): # For each ROI
+        ROI_arr = data_df[ROI].copy().values # Copy the ROI time series as an array
+        ROI_arr = phase_randomize(ROI_arr) # Randomize ROI time series using phase randomization
+        null_data_df[ROI] = ROI_arr # Add array to null data frame as a column
+    
+    return null_data_df
+
+
+# Randomize Connections for Null Data
+# -----------------------------------
+def randomize_conn(data_df):
+    """
+    This function randomwizes the connections in each window for an SWC matrix.
+    This function uses the numpy function np.random.shuffle() to randomize the connection order.
+    Note that since the np.random.shuffle() is random the function will output a different null 
+    data even with the same input data.
+       
+    INPUTS
+    ------
+    data_df: (pd.DataFrame) SWC matrix to randomize (windows x connections)
+    
+    OUTPUTS
+    -------
+    null_data_df: (pd.DataFrame) Randomized SWC matrix (windows x connections)
+    """
+    
+    N_wins, N_cons = data_df.shape # Save number of windows and connections
     null_data_df = pd.DataFrame(columns=data_df.columns) # Empty data frame for null data
-    for idx in range(0,N_x): # For data point
-        data_point_arr = data_df.iloc[idx].copy().values # Copy the connection values in a given colum as a numpy array col_arr
-        if null == 'shuffle':
-            np.random.shuffle(data_point_arr) # Shuffle the features values in the array
-        elif null == 'phase':
-            data_point_arr = phase_randomize(data_point_arr) # Randomize features using phase randomization
-        null_data_df.loc[len(null_data_df.index)] = data_point_arr # Save the random array in null data frame
+    
+    for idx in range(0,N_wins): # For data point
+        conn_arr = data_df.iloc[idx].copy().values # Copy the connection values in a given colum as an array 
+        np.random.shuffle(conn_arr) # Shuffle the connection values in the array
+        null_data_df.loc[len(null_data_df.index)] = conn_arr # Add array to null data frame as a row
     
     return null_data_df
