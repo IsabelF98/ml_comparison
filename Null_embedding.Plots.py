@@ -119,7 +119,7 @@ def group_F1(data_dict, label_df, label, n):
 # ## Laplacian Eigenmap
 # ***
 
-LE_k   = 50
+LE_k   = 130
 n      = 3
 metric = 'correlation'
 
@@ -281,7 +281,7 @@ print('         Data shape', null2_TSNE_F1_df.shape)
 # ## UMAP
 # ***
 
-UMAP_k = 130
+UMAP_k = 95
 n      = 3
 metric = 'correlation'
 
@@ -490,5 +490,4 @@ annot.apply_test()
 annot.annotate()
 plt.legend(loc='upper left', bbox_to_anchor=(1.03, 1))
 # -
-
 

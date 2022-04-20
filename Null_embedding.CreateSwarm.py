@@ -21,9 +21,9 @@ import os
 import os.path as osp
 from utils.data_info import PRJDIR, conda_loc, conda_env, SBJ_list, wl_sec, tr, ws_trs
 
-LE_k   = 50 # Best k-NN value for LE
+LE_k   = 130 # Best k-NN value for LE
 p      = 50 # Best perplexity value for TSNE
-UMAP_k = 130 # Best k-NN value for UMAP
+UMAP_k = 95 # Best k-NN value for UMAP
 n = 3 # Number of dimesnions to reduce
 metric = 'correlation' # Best distance metric
 
