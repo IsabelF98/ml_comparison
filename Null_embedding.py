@@ -29,6 +29,7 @@ def run(args):
     n      = args.n
     metric = args.metric
     data   = args.data
+    drop   = args.drop
     print(' ')
     print('++ INFO: Run information')
     print('         SBJ:   ',SBJ)
@@ -41,6 +42,7 @@ def run(args):
     print('         n:     ',n)
     print('         metric:',metric)
     print('         data:  ',data)
+    print('         drop:  ',drop)
     print(' ')
     
     if data == 'ROI':
@@ -69,14 +71,17 @@ def run(args):
         print('         Data shape:',SWC_df.shape)
         print(' ')
         
-        # Drop inbwtween task windows
-        # ---------------------------
-        wl_trs = int(wl_sec/tr)
-        task_df     = task_labels(wl_trs, PURE=False) # USE YOUR OWN FUNCTION TO LOAD TASK LABELS AS PD.DATAFRAME
-        drop_index  = task_df.index[task_df['Task'] == 'Inbetween']
-        drop_SWC_df = SWC_df.drop(drop_index).reset_index(drop=True)
-        print('++ INFO: Inbetween task windows dropped')
-        print('         Data shape:',drop_SWC_df.shape)
+        if drop == 'DropData':
+            # Drop inbwtween task windows
+            # ---------------------------
+            wl_trs = int(wl_sec/tr)
+            task_df     = task_labels(wl_trs, PURE=False) # USE YOUR OWN FUNCTION TO LOAD TASK LABELS AS PD.DATAFRAME
+            drop_index  = task_df.index[task_df['Task'] == 'Inbetween']
+            drop_SWC_df = SWC_df.drop(drop_index).reset_index(drop=True)
+            print('++ INFO: Inbetween task windows dropped')
+            print('         Data shape:',drop_SWC_df.shape)
+        elif drop == 'FullData':
+            drop_SWC_df = SWC_df.copy()
     
     
     elif data == 'SWC':
@@ -95,16 +100,19 @@ def run(args):
         print('++ INFO: SWC matrix null data computed')
         print('         Data shape:',null_SWC_df.shape)
         print(' ')
-    
-        # Drop inbwtween task windows
-        # ---------------------------
-        wl_trs = int(wl_sec/tr)
-        task_df     = task_labels(wl_trs, PURE=False) # USE YOUR OWN FUNCTION TO LOAD TASK LABELS AS PD.DATAFRAME
-        drop_index  = task_df.index[task_df['Task'] == 'Inbetween']
-        drop_SWC_df = null_SWC_df.drop(drop_index).reset_index(drop=True)
-        print('++ INFO: Inbetween task windows dropped')
-        print('         Data shape:',drop_SWC_df.shape)
-        print(' ')
+        
+        if drop == 'DropData':
+            # Drop inbwtween task windows
+            # ---------------------------
+            wl_trs = int(wl_sec/tr)
+            task_df     = task_labels(wl_trs, PURE=False) # USE YOUR OWN FUNCTION TO LOAD TASK LABELS AS PD.DATAFRAME
+            drop_index  = task_df.index[task_df['Task'] == 'Inbetween']
+            drop_SWC_df = null_SWC_df.drop(drop_index).reset_index(drop=True)
+            print('++ INFO: Inbetween task windows dropped')
+            print('         Data shape:',drop_SWC_df.shape)
+            print(' ')
+        elif drop == 'FullData':
+            drop_SWC_df = null_SWC_df.copy()
     
     # Compute LE Embedding
     # --------------------
@@ -116,7 +124,7 @@ def run(args):
     
     # Save LE file to outside directory
     # ---------------------------------
-    out_file = SBJ+'_'+data+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    out_file = SBJ+'_'+data+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
     out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
     LE_df.to_csv(out_path, index=False)
     print('++ INFO: LE data saved to')
@@ -124,15 +132,15 @@ def run(args):
     print(' ')
     
     # Compute TSNE Embedding
-    # -----------------
+    # ----------------------
     TSNE_df = T_Stochastic_Neighbor_Embedding(drop_SWC_df,p=p,n=n,metric=metric)
     print('++ INFO: TSNE embedding computed')
     print('         Data shape:',TSNE_df.shape)
     print(' ')
    
-    # Save file to outside directory
+    # Save TSNE file to outside directory
     # ------------------------------
-    out_file = SBJ+'_'+data+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    out_file = SBJ+'_'+data+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
     out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
     TSNE_df.to_csv(out_path, index=False)
     print('++ INFO: TSNE data saved to')
@@ -146,9 +154,9 @@ def run(args):
     print('        Data shape:',UMAP_df.shape)
     print(' ')
     
-    # Save file to outside directory
-    # ------------------------------
-    out_file = SBJ+'_'+data+'_Null_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    # Save UMAP file to outside directory
+    # -----------------------------------
+    out_file = SBJ+'_'+data+'_Null_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
     out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
     UMAP_df.to_csv(out_path, index=False)
     print('++ INFO: UMAP data saved to')
@@ -166,6 +174,7 @@ def main():
     parser.add_argument("-n", help="number of dimensions", dest="n", type=int, required=True)
     parser.add_argument("-met", help="distance metric (correlation, cosine, euclidean)", dest="metric", type=str, required=True)
     parser.add_argument("-data", help="Data to be randomized (ROI or SWC)", dest="data", type=str, required=True)
+    parser.add_argument("-drop", help="Drop inbetween windows or full data (DropData or FullData)", dest="drop", type=str, required=True)
     parser.set_defaults(func=run)
     args=parser.parse_args()
     args.func(args)
