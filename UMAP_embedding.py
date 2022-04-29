@@ -3,7 +3,7 @@
 
 # This file computes the embeddings using the Uniform Manifold Approximation and Projection algorithum
 # 1) Load sliding window correlation matrix
-# 2) Drop inbetween task windows
+# 2) Drop inbetween task windows (if not full data)
 # 3) Compute embedding
 # 4) Save file
 
@@ -22,6 +22,7 @@ def run(args):
     k      = args.k
     n      = args.n
     metric = args.metric
+    drop   = args.drop
     print(' ')
     print('++ INFO: Run information')
     print('         SBJ:   ',SBJ)
@@ -30,6 +31,7 @@ def run(args):
     print('         k:     ',k)
     print('         n:     ',n)
     print('         metric:',metric)
+    print('         drop:  ',drop)
     print(' ')
     
     # Load SWC matrix
@@ -41,15 +43,18 @@ def run(args):
     print('         Data shape:',SWC_df.shape)
     print(' ')
     
-    # Drop inbwtween task windows
-    # ---------------------------
-    wl_trs = int(wl_sec/tr)
-    task_df     = task_labels(wl_trs, PURE=False) # USE YOUR OWN FUNCTION TO LOAD TASK LABELS AS PD.DATAFRAME
-    drop_index  = task_df.index[task_df['Task'] == 'Inbetween']
-    drop_SWC_df = SWC_df.drop(drop_index).reset_index(drop=True)
-    print('++ INFO: Inbetween task windows dropped')
-    print('         Data shape:',drop_SWC_df.shape)
-    print(' ')
+    if drop == 'DropData':
+        # Drop inbwtween task windows
+        # ---------------------------
+        wl_trs = int(wl_sec/tr)
+        task_df     = task_labels(wl_trs, PURE=False) # USE YOUR OWN FUNCTION TO LOAD TASK LABELS AS PD.DATAFRAME
+        drop_index  = task_df.index[task_df['Task'] == 'Inbetween']
+        drop_SWC_df = SWC_df.drop(drop_index).reset_index(drop=True)
+        print('++ INFO: Inbetween task windows dropped')
+        print('         Data shape:',drop_SWC_df.shape)
+        print(' ')
+    elif drop == 'FullData':
+        drop_SWC_df = SWC_df.copy()
     
     # Compute Embedding
     # -----------------
@@ -60,7 +65,7 @@ def run(args):
     
     # Save file to outside directory
     # ------------------------------
-    out_file = SBJ+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    out_file = SBJ+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
     out_path = osp.join(PRJDIR,'derivatives','UMAP',out_file)
     UMAP_df.to_csv(out_path, index=False)
     print('++ INFO: Data saved to')
@@ -74,6 +79,7 @@ def main():
     parser.add_argument("-k",help="Nearest Neighboor value", dest="k", type=int, required=True)
     parser.add_argument("-n",help="number of dimensions", dest="n", type=int, required=True)
     parser.add_argument("-met",help="distance metric (correlation, cosine, euclidean)", dest="metric", type=str, required=True)
+    parser.add_argument("-drop", help="Drop inbetween windows or full data (DropData or FullData)", dest="drop", type=str, required=True)
     parser.set_defaults(func=run)
     args=parser.parse_args()
     args.func(args)

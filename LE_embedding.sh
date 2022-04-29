@@ -12,4 +12,4 @@ echo "++ Activating rapidtide environment"
 conda activate ${conda_env}
 
 # Run the program
-python ./LE_embedding.py -sbj ${SBJ} -wl_sec ${wl_sec} -tr ${tr} -k ${k} -n ${n} -met ${metric}
+python ./LE_embedding.py -sbj ${SBJ} -wl_sec ${wl_sec} -tr ${tr} -k ${k} -n ${n} -met ${metric} -drop ${drop}

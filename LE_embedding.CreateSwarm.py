@@ -29,13 +29,17 @@ os.system('if [ ! -d ../logs/LE_embedding.logs ]; then mkdir ../logs/LE_embeddin
 os.system('if [ ! -d ../derivatives ]; then mkdir ../derivatives; fi')
 os.system('if [ ! -d ../derivatives/LE ]; then mkdir ../derivatives/LE; fi')
 
+# +
 # Create SWARM file
-n = 30 # number of dimensions
+n = 3 # number of dimensions
+drop = 'FullData' # Dropped or full data
+
 os.system('echo "#swarm -f ./LE_embedding.SWARM.sh -g 30 -t 30 --time 8:00:00 --logdir ../logs/LE_embedding.logs" > ./LE_embedding.SWARM.sh')
 for SBJ in SBJ_list:
     for k in LE_k_list:
         for metric in ['correlation', 'cosine', 'euclidean']:
-            os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} k={k} n={n} metric={metric}; sh ./LE_embedding.sh" >> ./LE_embedding.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, k=k, n=n, metric=metric))
+            os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} k={k} n={n} metric={metric} drop={drop}; sh ./LE_embedding.sh" >> ./LE_embedding.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, k=k, n=n, metric=metric, drop=drop))
+# -
 
 
 

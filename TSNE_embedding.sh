@@ -12,4 +12,4 @@ echo "++ Activating rapidtide environment"
 conda activate ${conda_env}
 
 # Run the program
-python ./TSNE_embedding.py -sbj ${SBJ} -wl_sec ${wl_sec} -tr ${tr} -p ${p} -n ${n} -met ${metric}
+python ./TSNE_embedding.py -sbj ${SBJ} -wl_sec ${wl_sec} -tr ${tr} -p ${p} -n ${n} -met ${metric} -drop ${drop}
