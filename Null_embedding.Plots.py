@@ -33,13 +33,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 wl_trs = int(wl_sec/tr)
-task_df = task_labels(wl_trs, PURE=True)
+task_df = task_labels(wl_trs, PURE=False)
 
 
 # ## Functions
 # ***
 
-def group_SI(data_dict, label_df, label):
+def group_SI(data_dict, label_df, label, full_data):
     """
     This function computes the silhouette index for each embedding in a group of embeddings.
     
@@ -49,6 +49,7 @@ def group_SI(data_dict, label_df, label):
                and the embeddings are the values (as pd.DataFrames)
     label_df: (pd.DataFrame) A data frame of the labels you wish score by (e.x. task labels)
     label: (str) The name of the label you are scoring by (e.x. task)
+    full_data: (bool) Full data set (True) or dropped windows (False)
     
     OUTPUT
     ------
@@ -61,10 +62,17 @@ def group_SI(data_dict, label_df, label):
 
     for key in group_list:
         embed_df = data_dict[key]
-        silh_idx = silhouette_score(embed_df[['1_norm', '2_norm', '3_norm']], label_df[label].values)
+        if full_data:
+            drop_index    = label_df.index[label_df[label] == 'Inbetween']
+            drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+            drop_label_df = label_df.drop(drop_index).reset_index(drop=True)
+            silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_label_df[label].values)
+        else:
+            silh_idx = silhouette_score(embed_df[['1_norm', '2_norm', '3_norm']], label_df[label].values)
         SI_list.append(silh_idx)
-
+    
     SI_df = pd.DataFrame(SI_list, index=group_list, columns=['Silhouette Index'])
+    
     return SI_df
 
 
@@ -119,9 +127,10 @@ def group_F1(data_dict, label_df, label, n):
 # ## Laplacian Eigenmap
 # ***
 
-LE_k   = 130
+LE_k   = 50
 n      = 3
 metric = 'correlation'
+drop   = 'FullData'
 
 # ### Original Data
 
@@ -129,7 +138,7 @@ metric = 'correlation'
 # ---------------------------
 all_orig_LE = {}
 for SBJ in SBJ_list:
-    file_name  = SBJ+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name  = SBJ+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
     file_path  = osp.join(PRJDIR,'derivatives','LE',file_name)
     orig_LE_df = pd.read_csv(file_path)
     all_orig_LE[SBJ] = orig_LE_df
@@ -137,7 +146,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-orig_LE_SI_df = group_SI(all_orig_LE, task_df, 'Task')
+orig_LE_SI_df = group_SI(all_orig_LE, task_df, 'Task', full_data=True)
 print('++ INFO: SI data frame computed')
 print('         Data shape', orig_LE_SI_df.shape)
 
@@ -154,7 +163,7 @@ print('         Data shape', orig_LE_F1_df.shape)
 data = 'ROI'
 all_null1_LE = {}
 for SBJ in SBJ_list:
-    file_name  = SBJ+'_'+data+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name  = SBJ+'_'+data+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
     file_path  = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_LE_df = pd.read_csv(file_path)
     all_null1_LE[SBJ] = null_LE_df
@@ -162,7 +171,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-null1_LE_SI_df = group_SI(all_null1_LE, task_df, 'Task')
+null1_LE_SI_df = group_SI(all_null1_LE, task_df, 'Task', full_data=True)
 print('++ INFO: SI data frame computed')
 print('         Data shape', null1_LE_SI_df.shape)
 
@@ -179,7 +188,7 @@ print('         Data shape', null1_LE_F1_df.shape)
 data = 'SWC'
 all_null2_LE = {}
 for SBJ in SBJ_list:
-    file_name  = SBJ+'_'+data+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name  = SBJ+'_'+data+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
     file_path  = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_LE_df = pd.read_csv(file_path)
     all_null2_LE[SBJ] = null_LE_df
@@ -187,7 +196,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-null2_LE_SI_df = group_SI(all_null2_LE, task_df, 'Task')
+null2_LE_SI_df = group_SI(all_null2_LE, task_df, 'Task', full_data=True)
 print('++ INFO: SI data frame computed')
 print('         Data shape', null2_LE_SI_df.shape)
 
@@ -203,6 +212,7 @@ print('         Data shape', null2_LE_F1_df.shape)
 p = 50
 n = 3
 metric = 'correlation'
+drop = 'FullData'
 
 # ### Original Data
 
@@ -210,7 +220,7 @@ metric = 'correlation'
 # -----------------------------
 all_orig_TSNE = {}
 for SBJ in SBJ_list:
-    file_name    = SBJ+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name    = SBJ+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
     file_path    = osp.join(PRJDIR,'derivatives','TSNE',file_name)
     orig_TSNE_df = pd.read_csv(file_path)
     all_orig_TSNE[SBJ] = orig_TSNE_df
@@ -218,7 +228,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-orig_TSNE_SI_df = group_SI(all_orig_TSNE, task_df, 'Task')
+orig_TSNE_SI_df = group_SI(all_orig_TSNE, task_df, 'Task', full_data=True)
 print('++ INFO: SI data frame computed')
 print('         Data shape', orig_TSNE_SI_df.shape)
 
@@ -235,7 +245,7 @@ print('         Data shape', orig_TSNE_F1_df.shape)
 data = 'ROI'
 all_null1_TSNE = {}
 for SBJ in SBJ_list:
-    file_name    = SBJ+'_'+data+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name    = SBJ+'_'+data+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
     file_path    = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_TSNE_df = pd.read_csv(file_path)
     all_null1_TSNE[SBJ] = null_TSNE_df
@@ -243,7 +253,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-null1_TSNE_SI_df = group_SI(all_null1_TSNE, task_df, 'Task')
+null1_TSNE_SI_df = group_SI(all_null1_TSNE, task_df, 'Task', full_data=True)
 print('++ INFO: SI data frame computed')
 print('         Data shape', null1_TSNE_SI_df.shape)
 
@@ -260,7 +270,7 @@ print('         Data shape', null1_TSNE_F1_df.shape)
 data = 'SWC'
 all_null2_TSNE = {}
 for SBJ in SBJ_list:
-    file_name    = SBJ+'_'+data+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name    = SBJ+'_'+data+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
     file_path    = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_TSNE_df = pd.read_csv(file_path)
     all_null2_TSNE[SBJ] = null_TSNE_df
@@ -268,7 +278,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-null2_TSNE_SI_df = group_SI(all_null2_TSNE, task_df, 'Task')
+null2_TSNE_SI_df = group_SI(all_null2_TSNE, task_df, 'Task', full_data=True)
 print('++ INFO: SI data frame computed')
 print('         Data shape', null2_TSNE_SI_df.shape)
 
@@ -281,9 +291,10 @@ print('         Data shape', null2_TSNE_F1_df.shape)
 # ## UMAP
 # ***
 
-UMAP_k = 95
+UMAP_k = 130
 n      = 3
 metric = 'correlation'
+drop = 'FullData'
 
 # ### Origianl Data
 
@@ -291,7 +302,7 @@ metric = 'correlation'
 # ---------------------------
 all_orig_UMAP = {}
 for SBJ in SBJ_list:
-    file_name  = SBJ+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name  = SBJ+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
     file_path  = osp.join(PRJDIR,'derivatives','UMAP',file_name)
     orig_UMAP_df = pd.read_csv(file_path)
     all_orig_UMAP[SBJ] = orig_UMAP_df
@@ -299,7 +310,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-orig_UMAP_SI_df = group_SI(all_orig_UMAP, task_df, 'Task')
+orig_UMAP_SI_df = group_SI(all_orig_UMAP, task_df, 'Task', full_data=True)
 print('++ INFO: SI data frame computed')
 print('         Data shape', orig_UMAP_SI_df.shape)
 
@@ -316,7 +327,7 @@ print('         Data shape', orig_UMAP_F1_df.shape)
 data = 'ROI'
 all_null1_UMAP = {}
 for SBJ in SBJ_list:
-    file_name    = SBJ+'_'+data+'_Null_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name    = SBJ+'_'+data+'_Null_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
     file_path    = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_UMAP_df = pd.read_csv(file_path)
     all_null1_UMAP[SBJ] = null_UMAP_df
@@ -324,7 +335,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-null1_UMAP_SI_df = group_SI(all_null1_UMAP, task_df, 'Task')
+null1_UMAP_SI_df = group_SI(all_null1_UMAP, task_df, 'Task', full_data=True)
 print('++ INFO: SI data frame computed')
 print('         Data shape', null1_UMAP_SI_df.shape)
 
@@ -341,7 +352,7 @@ print('         Data shape', null1_UMAP_F1_df.shape)
 data = 'SWC'
 all_null2_UMAP = {}
 for SBJ in SBJ_list:
-    file_name    = SBJ+'_'+data+'_Null_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+    file_name    = SBJ+'_'+data+'_Null_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
     file_path    = osp.join(PRJDIR,'derivatives','Null_Data',file_name)
     null_UMAP_df = pd.read_csv(file_path)
     all_null2_UMAP[SBJ] = null_UMAP_df
@@ -349,7 +360,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-null2_UMAP_SI_df = group_SI(all_null2_UMAP, task_df, 'Task')
+null2_UMAP_SI_df = group_SI(all_null2_UMAP, task_df, 'Task', full_data=True)
 print('++ INFO: SI data frame computed')
 print('         Data shape', null2_UMAP_SI_df.shape)
 
