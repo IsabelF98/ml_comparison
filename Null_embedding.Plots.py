@@ -127,7 +127,7 @@ def group_F1(data_dict, label_df, label, n):
 # ## Laplacian Eigenmap
 # ***
 
-LE_k   = 50
+LE_k   = 80
 n      = 3
 metric = 'correlation'
 drop   = 'FullData'
@@ -209,7 +209,7 @@ print('         Data shape', null2_LE_F1_df.shape)
 # ## TSNE
 # ***
 
-p = 50
+p = 70
 n = 3
 metric = 'correlation'
 drop = 'FullData'
@@ -291,7 +291,7 @@ print('         Data shape', null2_TSNE_F1_df.shape)
 # ## UMAP
 # ***
 
-UMAP_k = 130
+UMAP_k = 80
 n      = 3
 metric = 'correlation'
 drop = 'FullData'
