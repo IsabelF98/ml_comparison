@@ -29,10 +29,15 @@ os.system('if [ ! -d ../logs/Silhouette_Index.logs ]; then mkdir ../logs/Silhoue
 os.system('if [ ! -d ../derivatives ]; then mkdir ../derivatives; fi')
 os.system('if [ ! -d ../derivatives/Silh_Idx ]; then mkdir ../derivatives/Silh_Idx; fi')
 
+# +
 # Create SWARM file
 os.system('echo "#swarm -f ./Silhouette_Index.SWARM.sh -g 30 -t 30 --time 8:00:00 --logdir ../logs/Silhouette_Index.logs" > ./Silhouette_Index.SWARM.sh')
+
+drop = 'FullData'
+
 for SBJ in SBJ_list:
     for embedding in ['LE', 'TSNE', 'UMAP']:
-        os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} embedding={embedding}; sh ./Silhouette_Index.sh" >> ./Silhouette_Index.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, embedding=embedding))
+        os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} embedding={embedding} drop={drop}; sh ./Silhouette_Index.sh" >> ./Silhouette_Index.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, embedding=embedding, drop=drop))
+# -
 
 

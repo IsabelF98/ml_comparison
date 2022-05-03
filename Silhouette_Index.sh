@@ -12,4 +12,4 @@ echo "++ Activating rapidtide environment"
 conda activate ${conda_env}
 
 # Run the program
-python ./Silhouette_Index.py -sbj ${SBJ} -wl_sec ${wl_sec} -tr ${tr} -emb ${embedding}
+python ./Silhouette_Index.py -sbj ${SBJ} -wl_sec ${wl_sec} -tr ${tr} -emb ${embedding} -drop ${drop}

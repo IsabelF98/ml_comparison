@@ -29,11 +29,12 @@ hv.extension('bokeh')
 # +
 # Load Silhouette Index Data
 # --------------------------
-embedding = 'TSNE' # CHOOSE EMBEDDING ('LE', 'TSNE', or 'UMAP')
+embedding = 'UMAP' # CHOOSE EMBEDDING ('LE', 'TSNE', or 'UMAP')
+drop = 'FullData'
 all_SBJ_SI = {}
 
 for SBJ in SBJ_list:
-    file_name = SBJ+'_Silh_Idx_'+embedding+'_wl'+str(wl_sec).zfill(3)+'.csv'
+    file_name = SBJ+'_Silh_Idx_'+embedding+'_wl'+str(wl_sec).zfill(3)+'_'+drop+'.csv'
     file_path = osp.join(PRJDIR,'derivatives','Silh_Idx',file_name)
     SI_df = pd.read_csv(file_path)
     all_SBJ_SI[SBJ] = SI_df
