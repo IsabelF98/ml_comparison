@@ -130,7 +130,7 @@ def Uniform_Manifold_Approximation_Projection(data_df,k,n,metric):
     # Compute Embedding
     seed      = np.random.RandomState(seed=3)
     embedding = umap.UMAP(n_components=n,
-                          n_neighbors=10,
+                          n_neighbors=k,
                           min_dist=0.1,
                           metric='correlation',
                           random_state=seed)
