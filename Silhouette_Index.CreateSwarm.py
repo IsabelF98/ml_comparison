@@ -32,11 +32,10 @@ os.system('if [ ! -d ../derivatives/Silh_Idx ]; then mkdir ../derivatives/Silh_I
 # +
 # Create SWARM file
 os.system('echo "#swarm -f ./Silhouette_Index.SWARM.sh -g 30 -t 30 --time 8:00:00 --logdir ../logs/Silhouette_Index.logs" > ./Silhouette_Index.SWARM.sh')
-
-drop = 'FullData'
+embedding = 'UMAP'
 
 for SBJ in SBJ_list:
-    for embedding in ['LE', 'TSNE', 'UMAP']:
+    for drop in ['FullData', 'DropData']:
         os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} embedding={embedding} drop={drop}; sh ./Silhouette_Index.sh" >> ./Silhouette_Index.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, embedding=embedding, drop=drop))
 # -
 
