@@ -46,7 +46,7 @@ def run(args):
     
     # Save file to outside directory
     # ------------------------------
-    out_file = SBJ+'_SWC_matrix_wl'+str(wl_sec).zfill(3)+'.csv'
+    out_file = SBJ+'_SWC_matrix_wl'+str(wl_sec).zfill(3)+'_FullData.csv'
     out_path = osp.join(PRJDIR,'derivatives','SWC',out_file)
     SWC_df.to_csv(out_path, index=False)
     print('++ INFO: Data saved to')
