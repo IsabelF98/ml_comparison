@@ -36,12 +36,20 @@ def run(args):
     
     # Load SWC matrix
     # ---------------
-    file_name = SBJ+'_SWC_matrix_wl'+str(wl_sec).zfill(3)+'.csv'
-    file_path = osp.join(PRJDIR,'derivatives','SWC',file_name)
-    SWC_df    = pd.read_csv(file_path)  
-    print('++ INFO: SWC matrix loaded')
-    print('         Data shape:',SWC_df.shape)
-    print(' ')
+    if drop == 'DropData':
+        file_name = SBJ+'_SWC_matrix_wl'+str(wl_sec).zfill(3)+'_FullData.csv'
+        file_path = osp.join(PRJDIR,'derivatives','SWC',file_name)
+        SWC_df    = pd.read_csv(file_path)  
+        print('++ INFO: SWC matrix loaded')
+        print('         Data shape:',SWC_df.shape)
+        print(' ')
+    else:
+        file_name = SBJ+'_SWC_matrix_wl'+str(wl_sec).zfill(3)+'_'+drop+'.csv'
+        file_path = osp.join(PRJDIR,'derivatives','SWC',file_name)
+        SWC_df    = pd.read_csv(file_path)  
+        print('++ INFO: SWC matrix loaded')
+        print('         Data shape:',SWC_df.shape)
+        print(' ')
     
     if drop == 'DropData':
         # Drop inbwtween task windows
@@ -53,24 +61,27 @@ def run(args):
         print('++ INFO: Inbetween task windows dropped')
         print('         Data shape:',drop_SWC_df.shape)
         print(' ')
-    elif drop == 'FullData':
+    else:
         drop_SWC_df = SWC_df.copy()
     
-    # Compute Embedding
-    # -----------------
-    dist_metric_dict = {'correlation':correlation, 'cosine':cosine, 'euclidean':euclidean}
-    LE_df = Laplacain_Eigenmap(drop_SWC_df,k=k,n=n,metric=dist_metric_dict[metric])
-    print('++INFO: Laplacian Eigenmap embedding computed')
-    print('        Data shape:',LE_df.shape)
-    print(' ')
+    if k < drop_SWC_df.shape[0]:
+        # Compute Embedding
+        # -----------------
+        dist_metric_dict = {'correlation':correlation, 'cosine':cosine, 'euclidean':euclidean}
+        LE_df = Laplacain_Eigenmap(drop_SWC_df,k=k,n=n,metric=dist_metric_dict[metric])
+        print('++INFO: Laplacian Eigenmap embedding computed')
+        print('        Data shape:',LE_df.shape)
+        print(' ')
     
-    # Save file to outside directory
-    # ------------------------------
-    out_file = SBJ+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
-    out_path = osp.join(PRJDIR,'derivatives','LE',out_file)
-    LE_df.to_csv(out_path, index=False)
-    print('++ INFO: Data saved to')
-    print('       ',out_path)
+        # Save file to outside directory
+        # ------------------------------
+        out_file = SBJ+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
+        out_path = osp.join(PRJDIR,'derivatives','LE',out_file)
+        LE_df.to_csv(out_path, index=False)
+        print('++ INFO: Data saved to')
+        print('       ',out_path)
+    else:
+         print('++ INFO: SWC matrix size is too big for k value')
 
 def main():
     parser=argparse.ArgumentParser(description="Compute embeddings using the Laplacian Eigenmap algorithum.")
@@ -80,7 +91,7 @@ def main():
     parser.add_argument("-k",help="k-Nearest Neighboor value", dest="k", type=int, required=True)
     parser.add_argument("-n",help="number of dimensions", dest="n", type=int, required=True)
     parser.add_argument("-met",help="distance metric (correlation, cosine, euclidean)", dest="metric", type=str, required=True)
-    parser.add_argument("-drop", help="Drop inbetween windows or full data (DropData or FullData)", dest="drop", type=str, required=True)
+    parser.add_argument("-drop", help="Drop inbetween windows or full data (DropData, FullData, or DropN)", dest="drop", type=str, required=True)
     parser.set_defaults(func=run)
     args=parser.parse_args()
     args.func(args)

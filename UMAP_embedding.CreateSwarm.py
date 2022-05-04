@@ -32,12 +32,12 @@ os.system('if [ ! -d ../derivatives/UMAP ]; then mkdir ../derivatives/UMAP; fi')
 # +
 # Create SWARM file
 n = 3 # number of dimensions
-drop = 'FullData'
 
 os.system('echo "#swarm -f ./UMAP_embedding.SWARM.sh -g 30 -t 30 --time 8:00:00 --logdir ../logs/UMAP_embedding.logs" > ./UMAP_embedding.SWARM.sh')
 for SBJ in SBJ_list:
     for k in UMAP_k_list:
         for metric in ['correlation', 'cosine', 'euclidean']:
-            os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} k={k} n={n} metric={metric} drop={drop}; sh ./UMAP_embedding.sh" >> ./UMAP_embedding.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, k=k, n=n, metric=metric, drop=drop))
+            for drop in ['Drop5', 'Drop10', 'Drop15']:
+                os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} k={k} n={n} metric={metric} drop={drop}; sh ./UMAP_embedding.sh" >> ./UMAP_embedding.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, k=k, n=n, metric=metric, drop=drop))
 # -
 

@@ -36,12 +36,20 @@ def run(args):
     
     # Load SWC matrix
     # ---------------
-    file_name = SBJ+'_SWC_matrix_wl'+str(wl_sec).zfill(3)+'.csv'
-    file_path = osp.join(PRJDIR,'derivatives','SWC',file_name)
-    SWC_df    = pd.read_csv(file_path)  
-    print('++ INFO: SWC matrix loaded')
-    print('         Data shape:',SWC_df.shape)
-    print(' ')
+    if drop == 'DropData':
+        file_name = SBJ+'_SWC_matrix_wl'+str(wl_sec).zfill(3)+'_FullData.csv'
+        file_path = osp.join(PRJDIR,'derivatives','SWC',file_name)
+        SWC_df    = pd.read_csv(file_path)  
+        print('++ INFO: SWC matrix loaded')
+        print('         Data shape:',SWC_df.shape)
+        print(' ')
+    else:
+        file_name = SBJ+'_SWC_matrix_wl'+str(wl_sec).zfill(3)+'_'+drop+'.csv'
+        file_path = osp.join(PRJDIR,'derivatives','SWC',file_name)
+        SWC_df    = pd.read_csv(file_path)  
+        print('++ INFO: SWC matrix loaded')
+        print('         Data shape:',SWC_df.shape)
+        print(' ')
     
     if drop == 'DropData':
         # Drop inbwtween task windows
@@ -53,24 +61,27 @@ def run(args):
         print('++ INFO: Inbetween task windows dropped')
         print('         Data shape:',drop_SWC_df.shape)
         print(' ')
-    elif drop == 'FullData':
+    else:
         drop_SWC_df = SWC_df.copy()
     
-    # Compute Embedding
-    # -----------------
-    TSNE_df = T_Stochastic_Neighbor_Embedding(drop_SWC_df,p=p,n=n,metric=metric)
-    print('++ INFO: TSNE embedding computed')
-    print('         Data shape:',TSNE_df.shape)
-    print(' ')
+    if p < drop_SWC_df.shape[0]:
+        # Compute Embedding
+        # -----------------
+        TSNE_df = T_Stochastic_Neighbor_Embedding(drop_SWC_df,p=p,n=n,metric=metric)
+        print('++ INFO: TSNE embedding computed')
+        print('         Data shape:',TSNE_df.shape)
+        print(' ')
     
-    # Save file to outside directory
-    # ------------------------------
-    out_file = SBJ+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
-    out_path = osp.join(PRJDIR,'derivatives','TSNE',out_file)
-    TSNE_df.to_csv(out_path, index=False)
-    print('++ INFO: Data saved to')
-    print('       ',out_path)
-
+        # Save file to outside directory
+        # ------------------------------
+        out_file = SBJ+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
+        out_path = osp.join(PRJDIR,'derivatives','TSNE',out_file)
+        TSNE_df.to_csv(out_path, index=False)
+        print('++ INFO: Data saved to')
+        print('       ',out_path)
+    else:
+         print('++ INFO: SWC matrix size is too big for p value')
+    
 def main():
     parser=argparse.ArgumentParser(description="Compute embeddings using the Laplacian Eigenmap algorithum.")
     parser.add_argument("-sbj",help="subject name in SBJXX format", dest="subject", type=str, required=True)
