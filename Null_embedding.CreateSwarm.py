@@ -23,7 +23,7 @@ from utils.data_info import PRJDIR, conda_loc, conda_env, SBJ_list, wl_sec, tr, 
 
 LE_k   = 80 # Best k-NN value for LE
 p      = 70 # Best perplexity value for TSNE
-UMAP_k = 80 # Best k-NN value for UMAP
+UMAP_k = 10 # Best k-NN value for UMAP
 n = 3 # Number of dimesnions to reduce
 metric = 'correlation' # Best distance metric
 

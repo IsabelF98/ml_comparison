@@ -124,13 +124,15 @@ def group_F1(data_dict, label_df, label, n):
     return F1_df
 
 
+n         = 3
+metric    = 'correlation'
+drop      = 'FullData'
+full_data = True
+
 # ## Laplacian Eigenmap
 # ***
 
-LE_k   = 80
-n      = 3
-metric = 'correlation'
-drop   = 'FullData'
+LE_k = 80
 
 # ### Original Data
 
@@ -146,7 +148,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-orig_LE_SI_df = group_SI(all_orig_LE, task_df, 'Task', full_data=True)
+orig_LE_SI_df = group_SI(all_orig_LE, task_df, 'Task', full_data=full_data)
 print('++ INFO: SI data frame computed')
 print('         Data shape', orig_LE_SI_df.shape)
 
@@ -171,7 +173,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-null1_LE_SI_df = group_SI(all_null1_LE, task_df, 'Task', full_data=True)
+null1_LE_SI_df = group_SI(all_null1_LE, task_df, 'Task', full_data=full_data)
 print('++ INFO: SI data frame computed')
 print('         Data shape', null1_LE_SI_df.shape)
 
@@ -196,7 +198,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-null2_LE_SI_df = group_SI(all_null2_LE, task_df, 'Task', full_data=True)
+null2_LE_SI_df = group_SI(all_null2_LE, task_df, 'Task', full_data=full_data)
 print('++ INFO: SI data frame computed')
 print('         Data shape', null2_LE_SI_df.shape)
 
@@ -210,9 +212,6 @@ print('         Data shape', null2_LE_F1_df.shape)
 # ***
 
 p = 70
-n = 3
-metric = 'correlation'
-drop = 'FullData'
 
 # ### Original Data
 
@@ -228,7 +227,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-orig_TSNE_SI_df = group_SI(all_orig_TSNE, task_df, 'Task', full_data=True)
+orig_TSNE_SI_df = group_SI(all_orig_TSNE, task_df, 'Task', full_data=full_data)
 print('++ INFO: SI data frame computed')
 print('         Data shape', orig_TSNE_SI_df.shape)
 
@@ -253,7 +252,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-null1_TSNE_SI_df = group_SI(all_null1_TSNE, task_df, 'Task', full_data=True)
+null1_TSNE_SI_df = group_SI(all_null1_TSNE, task_df, 'Task', full_data=full_data)
 print('++ INFO: SI data frame computed')
 print('         Data shape', null1_TSNE_SI_df.shape)
 
@@ -278,7 +277,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-null2_TSNE_SI_df = group_SI(all_null2_TSNE, task_df, 'Task', full_data=True)
+null2_TSNE_SI_df = group_SI(all_null2_TSNE, task_df, 'Task', full_data=full_data)
 print('++ INFO: SI data frame computed')
 print('         Data shape', null2_TSNE_SI_df.shape)
 
@@ -291,10 +290,7 @@ print('         Data shape', null2_TSNE_F1_df.shape)
 # ## UMAP
 # ***
 
-UMAP_k = 80
-n      = 3
-metric = 'correlation'
-drop = 'FullData'
+UMAP_k = 10
 
 # ### Origianl Data
 
@@ -310,7 +306,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-orig_UMAP_SI_df = group_SI(all_orig_UMAP, task_df, 'Task', full_data=True)
+orig_UMAP_SI_df = group_SI(all_orig_UMAP, task_df, 'Task', full_data=full_data)
 print('++ INFO: SI data frame computed')
 print('         Data shape', orig_UMAP_SI_df.shape)
 
@@ -335,7 +331,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-null1_UMAP_SI_df = group_SI(all_null1_UMAP, task_df, 'Task', full_data=True)
+null1_UMAP_SI_df = group_SI(all_null1_UMAP, task_df, 'Task', full_data=full_data)
 print('++ INFO: SI data frame computed')
 print('         Data shape', null1_UMAP_SI_df.shape)
 
@@ -360,7 +356,7 @@ for SBJ in SBJ_list:
 
 # Compute group SI
 # ----------------
-null2_UMAP_SI_df = group_SI(all_null2_UMAP, task_df, 'Task', full_data=True)
+null2_UMAP_SI_df = group_SI(all_null2_UMAP, task_df, 'Task', full_data=full_data)
 print('++ INFO: SI data frame computed')
 print('         Data shape', null2_UMAP_SI_df.shape)
 

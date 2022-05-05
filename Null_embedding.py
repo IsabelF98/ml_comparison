@@ -80,19 +80,28 @@ def run(args):
             drop_SWC_df = SWC_df.drop(drop_index).reset_index(drop=True)
             print('++ INFO: Inbetween task windows dropped')
             print('         Data shape:',drop_SWC_df.shape)
-        elif drop == 'FullData':
+            print(' ')
+        else:
             drop_SWC_df = SWC_df.copy()
     
     
     elif data == 'SWC':
         # Load SWC matrix
         # ---------------
-        file_name = SBJ+'_SWC_matrix_wl'+str(wl_sec).zfill(3)+'.csv'
-        file_path = osp.join(PRJDIR,'derivatives','SWC',file_name)
-        SWC_df    = pd.read_csv(file_path)  
-        print('++ INFO: SWC matrix loaded')
-        print('         Data shape:',SWC_df.shape)
-        print(' ')
+        if drop == 'DropData':
+            file_name = SBJ+'_SWC_matrix_wl'+str(wl_sec).zfill(3)+'_FullData.csv'
+            file_path = osp.join(PRJDIR,'derivatives','SWC',file_name)
+            SWC_df    = pd.read_csv(file_path)  
+            print('++ INFO: SWC matrix loaded')
+            print('         Data shape:',SWC_df.shape)
+            print(' ')
+        else:
+            file_name = SBJ+'_SWC_matrix_wl'+str(wl_sec).zfill(3)+'_'+drop+'.csv'
+            file_path = osp.join(PRJDIR,'derivatives','SWC',file_name)
+            SWC_df    = pd.read_csv(file_path)  
+            print('++ INFO: SWC matrix loaded')
+            print('         Data shape:',SWC_df.shape)
+            print(' ')
     
         # Compute null data
         # -----------------
@@ -111,46 +120,46 @@ def run(args):
             print('++ INFO: Inbetween task windows dropped')
             print('         Data shape:',drop_SWC_df.shape)
             print(' ')
-        elif drop == 'FullData':
+        else:
             drop_SWC_df = null_SWC_df.copy()
     
     # Compute LE Embedding
     # --------------------
-    dist_metric_dict = {'correlation':correlation, 'cosine':cosine, 'euclidean':euclidean}
-    LE_df = Laplacain_Eigenmap(drop_SWC_df,k=LE_k,n=n,metric=dist_metric_dict[metric])
-    print('++INFO: Laplacian Eigenmap embedding computed')
-    print('        Data shape:',LE_df.shape)
-    print(' ')
+    #dist_metric_dict = {'correlation':correlation, 'cosine':cosine, 'euclidean':euclidean}
+    #LE_df = Laplacain_Eigenmap(drop_SWC_df,k=LE_k,n=n,metric=dist_metric_dict[metric])
+    #print('++ INFO: Laplacian Eigenmap embedding computed')
+    #print('        Data shape:',LE_df.shape)
+    #print(' ')
     
     # Save LE file to outside directory
     # ---------------------------------
-    out_file = SBJ+'_'+data+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
-    out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
-    LE_df.to_csv(out_path, index=False)
-    print('++ INFO: LE data saved to')
-    print('       ',out_path)
-    print(' ')
+    #out_file = SBJ+'_'+data+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
+    #out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
+    #LE_df.to_csv(out_path, index=False)
+    #print('++ INFO: LE data saved to')
+    #print('       ',out_path)
+    #print(' ')
     
     # Compute TSNE Embedding
     # ----------------------
-    TSNE_df = T_Stochastic_Neighbor_Embedding(drop_SWC_df,p=p,n=n,metric=metric)
-    print('++ INFO: TSNE embedding computed')
-    print('         Data shape:',TSNE_df.shape)
-    print(' ')
+    #TSNE_df = T_Stochastic_Neighbor_Embedding(drop_SWC_df,p=p,n=n,metric=metric)
+    #print('++ INFO: TSNE embedding computed')
+    #print('         Data shape:',TSNE_df.shape)
+    #print(' ')
    
     # Save TSNE file to outside directory
     # ------------------------------
-    out_file = SBJ+'_'+data+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
-    out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
-    TSNE_df.to_csv(out_path, index=False)
-    print('++ INFO: TSNE data saved to')
-    print('       ',out_path)
-    print(' ')
+    #out_file = SBJ+'_'+data+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
+    #out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
+    #TSNE_df.to_csv(out_path, index=False)
+    #print('++ INFO: TSNE data saved to')
+    #print('       ',out_path)
+    #print(' ')
     
     # Compute UMAP Embedding
     # -----------------
     UMAP_df = Uniform_Manifold_Approximation_Projection(drop_SWC_df,k=UMAP_k,n=n,metric=metric)
-    print('++INFO: UMAP embedding computed')
+    print('++ INFO: UMAP embedding computed')
     print('        Data shape:',UMAP_df.shape)
     print(' ')
     
