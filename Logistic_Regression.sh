@@ -12,4 +12,4 @@ echo "++ Activating rapidtide environment"
 conda activate ${conda_env}
 
 # Run the program
-python ./Logistic_Regression.py -sbj ${SBJ} -wl_sec ${wl_sec} -tr ${tr} -kp ${kp} -n ${n} -met ${metric} -emb ${embedding}
+python ./Logistic_Regression.py -sbj ${SBJ} -wl_sec ${wl_sec} -tr ${tr} -kp ${kp} -n ${n} -met ${metric} -emb ${embedding} -drop ${drop}

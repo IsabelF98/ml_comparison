@@ -19,6 +19,7 @@ def run(args):
     n         = args.n
     metric    = args.metric
     embedding = args.embedding
+    drop   = args.drop
     print(' ')
     print('++ INFO: Run information')
     print('         SBJ:      ',SBJ)
@@ -28,6 +29,7 @@ def run(args):
     print('         n:        ',n)
     print('         metric:   ',metric)
     print('         embedding:',embedding)
+    print('         drop:  ',drop)
     print(' ')
     
     # Train and test split
@@ -46,7 +48,6 @@ def run(args):
     print('         Test data shape:', test_task_df.shape)
     print(' ')
     
-    
     # Logistic Regression solver
     # --------------------------
     Log_Reg = LogisticRegression(solver='liblinear', penalty='l2', random_state=0)
@@ -55,7 +56,7 @@ def run(args):
     # ---------------------
     if embedding == 'LE':
         # Load embedding
-        LE_file_name = SBJ+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+        LE_file_name = SBJ+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
         LE_file_path = osp.join(PRJDIR,'derivatives','LE',LE_file_name)
         LE_df        = pd.read_csv(LE_file_path)
         # Split data
@@ -67,7 +68,7 @@ def run(args):
         LE_Log_Reg_Clas = LE_Log_Reg.classes_
         LE_LR_df = pd.DataFrame(LE_Log_Reg_Coef.T, columns=list(LE_Log_Reg_Clas))
         # Save LR coeffs
-        LE_out_file1 = SBJ+'_LE_LRcoef_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+        LE_out_file1 = SBJ+'_LE_LRcoef_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
         LE_out_path1 = osp.join(PRJDIR,'derivatives','Log_Reg',LE_out_file1)
         LE_LR_df.to_csv(LE_out_path1, index=False)
         print('++ INFO: LE LR coefficients saved to')
@@ -78,7 +79,7 @@ def run(args):
         # Classification Report
         LE_class_report_df = pd.DataFrame(metrics.classification_report(test_task_df, LE_predicted, output_dict=True)).T
         # Save LR class report
-        LE_out_file2 = SBJ+'_LE_LRclassrep_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+        LE_out_file2 = SBJ+'_LE_LRclassrep_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
         LE_out_path2 = osp.join(PRJDIR,'derivatives','Log_Reg',LE_out_file2)
         LE_class_report_df.to_csv(LE_out_path2, index=True)
         print('++ INFO: LE LR classification report saved to')
@@ -90,7 +91,7 @@ def run(args):
     # -------
     elif embedding == 'TSNE':
         # Load embedding
-        TSNE_file_name = SBJ+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+        TSNE_file_name = SBJ+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
         TSNE_file_path = osp.join(PRJDIR,'derivatives','TSNE',TSNE_file_name)
         TSNE_df        = pd.read_csv(TSNE_file_path)
         # Split data
@@ -102,7 +103,7 @@ def run(args):
         TSNE_Log_Reg_Clas = TSNE_Log_Reg.classes_
         TSNE_LR_df = pd.DataFrame(TSNE_Log_Reg_Coef.T, columns=list(TSNE_Log_Reg_Clas))
         # Save LR coeffs
-        TSNE_out_file1 = SBJ+'_TSNE_LRcoef_wl'+str(wl_sec).zfill(3)+'_p'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+        TSNE_out_file1 = SBJ+'_TSNE_LRcoef_wl'+str(wl_sec).zfill(3)+'_p'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
         TSNE_out_path1 = osp.join(PRJDIR,'derivatives','Log_Reg',TSNE_out_file1)
         TSNE_LR_df.to_csv(TSNE_out_path1, index=False)
         print('++ INFO: TSNE LR coefficients saved to')
@@ -113,7 +114,7 @@ def run(args):
         # Classification Report
         TSNE_class_report_df = pd.DataFrame(metrics.classification_report(test_task_df, TSNE_predicted, output_dict=True)).T
         # Save LR class report
-        TSNE_out_file2 = SBJ+'_TSNE_LRclassrep_wl'+str(wl_sec).zfill(3)+'_p'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+        TSNE_out_file2 = SBJ+'_TSNE_LRclassrep_wl'+str(wl_sec).zfill(3)+'_p'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
         TSNE_out_path2 = osp.join(PRJDIR,'derivatives','Log_Reg',TSNE_out_file2)
         TSNE_class_report_df.to_csv(TSNE_out_path2, index=True)
         print('++ INFO: TSNE LR classification report saved to')
@@ -124,7 +125,7 @@ def run(args):
     # -------
     elif embedding == 'UMAP':
         # Load embedding
-        UMAP_file_name = SBJ+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+        UMAP_file_name = SBJ+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
         UMAP_file_path = osp.join(PRJDIR,'derivatives','UMAP',UMAP_file_name)
         UMAP_df        = pd.read_csv(UMAP_file_path)
         # Split data
@@ -136,7 +137,7 @@ def run(args):
         UMAP_Log_Reg_Clas = UMAP_Log_Reg.classes_
         UMAP_LR_df = pd.DataFrame(UMAP_Log_Reg_Coef.T, columns=list(UMAP_Log_Reg_Clas))
         # Save LR coeffs
-        UMAP_out_file1 = SBJ+'_UMAP_LRcoef_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+        UMAP_out_file1 = SBJ+'_UMAP_LRcoef_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
         UMAP_out_path1 = osp.join(PRJDIR,'derivatives','Log_Reg',UMAP_out_file1)
         UMAP_LR_df.to_csv(UMAP_out_path1, index=False)
         print('++ INFO: UMAP LR coefficients saved to')
@@ -147,7 +148,7 @@ def run(args):
         # Classification Report
         UMAP_class_report_df = pd.DataFrame(metrics.classification_report(test_task_df, UMAP_predicted, output_dict=True)).T
         # Save LR class report
-        UMAP_out_file2 = SBJ+'_UMAP_LRclassrep_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+        UMAP_out_file2 = SBJ+'_UMAP_LRclassrep_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
         UMAP_out_path2 = osp.join(PRJDIR,'derivatives','Log_Reg',UMAP_out_file2)
         UMAP_class_report_df.to_csv(UMAP_out_path2, index=True)
         print('++ INFO: UMAP LR classification report saved to')
@@ -163,6 +164,7 @@ def main():
     parser.add_argument("-n", help="number of dimensions", dest="n", type=int, required=True)
     parser.add_argument("-met", help="distance metric (correlation, cosine, euclidean)", dest="metric", type=str, required=True)
     parser.add_argument("-emb",help="embedding type (LE, TSNE, UMAP)", dest="embedding", type=str, required=True)
+    parser.add_argument("-drop", help="Drop inbetween windows or full data (DropData, FullData, or DropN)", dest="drop", type=str, required=True)
     parser.set_defaults(func=run)
     args=parser.parse_args()
     args.func(args)

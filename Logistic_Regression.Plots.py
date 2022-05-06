@@ -27,6 +27,7 @@ hv.extension('bokeh')
 
 dist_metric_list = ['correlation', 'cosine', 'euclidean']
 n = 3
+drop = 'DropData'
 
 # ## Laplacian Eigenmap
 # ***
@@ -39,7 +40,7 @@ for SBJ in SBJ_list:
     for metric in dist_metric_list:
         metric_acur_list = []
         for LE_k in LE_k_list:
-            LE_file = SBJ+'_LE_LRclassrep_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+            LE_file = SBJ+'_LE_LRclassrep_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
             LE_path = osp.join(PRJDIR,'derivatives','Log_Reg',LE_file)
             LE_class_report_df = pd.read_csv(LE_path)
             F1_acur = LE_class_report_df.loc[4,'f1-score']
@@ -81,7 +82,7 @@ for SBJ in SBJ_list:
     for metric in dist_metric_list:
         metric_acur_list = []
         for p in p_list:
-            TSNE_file = SBJ+'_TSNE_LRclassrep_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+            TSNE_file = SBJ+'_TSNE_LRclassrep_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
             TSNE_path = osp.join(PRJDIR,'derivatives','Log_Reg',TSNE_file)
             TSNE_class_report_df = pd.read_csv(TSNE_path)
             F1_acur = TSNE_class_report_df.loc[4,'f1-score']
@@ -123,7 +124,7 @@ for SBJ in SBJ_list:
     for metric in dist_metric_list:
         metric_acur_list = []
         for UMAP_k in UMAP_k_list:
-            UMAP_file = SBJ+'_UMAP_LRclassrep_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'.csv'
+            UMAP_file = SBJ+'_UMAP_LRclassrep_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
             UMAP_path = osp.join(PRJDIR,'derivatives','Log_Reg',UMAP_file)
             UMAP_class_report_df = pd.read_csv(UMAP_path)
             F1_acur = UMAP_class_report_df.loc[4,'f1-score']
@@ -138,7 +139,7 @@ sem_group_acur = pd.concat([all_SBJ_acur[SBJ] for SBJ in SBJ_list]).groupby(leve
 
 # Plot data frame
 # ---------------
-plot_df = pd.DataFrame(LE_k_list,columns=['k-NN value'])
+plot_df = pd.DataFrame(UMAP_k_list,columns=['k-NN value'])
 for metric in dist_metric_list:
     plot_df[metric] = avg_group_acur[metric].copy()
     plot_df[metric+' +SE'] = avg_group_acur[metric] + sem_group_acur[metric]
@@ -153,3 +154,5 @@ hv.Points(plot_df, kdims=['k-NN value' ,'cosine'], label='cosine'))*\
 (hv.Area((plot_df['k-NN value' ], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
 hv.Points(plot_df, kdims=['k-NN value' ,'euclidean'], label='euclidean')))\
 .opts(width=700, height=500, xlabel='k-NN value' , ylabel='Average F1 Accuracy',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14})
+
+
