@@ -27,7 +27,7 @@ hv.extension('bokeh')
 
 dist_metric_list = ['correlation', 'cosine', 'euclidean']
 n = 3
-drop = 'DropData'
+drop = 'FullData'
 
 # ## Laplacian Eigenmap
 # ***
@@ -153,6 +153,6 @@ hv.Points(plot_df, kdims=['k-NN value' ,'correlation'], label='correlation'))*\
 hv.Points(plot_df, kdims=['k-NN value' ,'cosine'], label='cosine'))*\
 (hv.Area((plot_df['k-NN value' ], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
 hv.Points(plot_df, kdims=['k-NN value' ,'euclidean'], label='euclidean')))\
-.opts(width=700, height=500, xlabel='k-NN value' , ylabel='Average F1 Accuracy',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14})
+.opts(width=700, height=500, xlabel='k-NN value' , ylabel='Average F1 Accuracy',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14}, legend_position='top_left')
 
 

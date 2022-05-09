@@ -59,6 +59,14 @@ def run(args):
         LE_file_name = SBJ+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
         LE_file_path = osp.join(PRJDIR,'derivatives','LE',LE_file_name)
         LE_df        = pd.read_csv(LE_file_path)
+        # Drop inbetween windows if using full data
+        if drop == 'FullData':
+            temp_task_df = task_labels(wl_trs, PURE=False)
+            drop_index   = temp_task_df.index[temp_task_df['Task'] == 'Inbetween']
+            LE_df        = LE_df.drop(drop_index).reset_index(drop=True)
+            print('++ INFO: Inbetween task windows dropped')
+            print('         Data shape:',LE_df.shape)
+            print(' ')
         # Split data
         train_LE_df = LE_df.loc[train_idx[0]:train_idx[1]].copy()
         test_LE_df  = LE_df.loc[test_idx[0]:test_idx[1]].copy()
@@ -94,6 +102,14 @@ def run(args):
         TSNE_file_name = SBJ+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
         TSNE_file_path = osp.join(PRJDIR,'derivatives','TSNE',TSNE_file_name)
         TSNE_df        = pd.read_csv(TSNE_file_path)
+        # Drop inbetween windows if using full data
+        if drop == 'FullData':
+            temp_task_df = task_labels(wl_trs, PURE=False)
+            drop_index   = temp_task_df.index[temp_task_df['Task'] == 'Inbetween']
+            TSNE_df      = TSNE_df.drop(drop_index).reset_index(drop=True)
+            print('++ INFO: Inbetween task windows dropped')
+            print('         Data shape:',TSNE_df.shape)
+            print(' ')
         # Split data
         train_TSNE_df = TSNE_df.loc[train_idx[0]:train_idx[1]].copy()
         test_TSNE_df  = TSNE_df.loc[test_idx[0]:test_idx[1]].copy()
@@ -128,6 +144,14 @@ def run(args):
         UMAP_file_name = SBJ+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(kp).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
         UMAP_file_path = osp.join(PRJDIR,'derivatives','UMAP',UMAP_file_name)
         UMAP_df        = pd.read_csv(UMAP_file_path)
+        # Drop inbetween windows if using full data
+        if drop == 'FullData':
+            temp_task_df = task_labels(wl_trs, PURE=False)
+            drop_index   = temp_task_df.index[temp_task_df['Task'] == 'Inbetween']
+            UMAP_df      = UMAP_df.drop(drop_index).reset_index(drop=True)
+            print('++ INFO: Inbetween task windows dropped')
+            print('         Data shape:',UMAP_df.shape)
+            print(' ')
         # Split data
         train_UMAP_df = UMAP_df.loc[train_idx[0]:train_idx[1]].copy()
         test_UMAP_df  = UMAP_df.loc[test_idx[0]:test_idx[1]].copy()
