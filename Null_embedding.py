@@ -19,30 +19,34 @@ from utils.data_functions import compute_SWC, randomize_ROI, randomize_conn
 from utils.data_info import DATADIR, PRJDIR, load_task_ROI_TS, task_labels
 
 def run(args):
-    SBJ    = args.subject
-    wl_sec = args.window_length_sec
-    tr     = args.time_resolution
-    ws_trs = args.window_space_tr
-    LE_k   = args.LE_k
-    p      = args.p
-    UMAP_k = args.UMAP_k
-    n      = args.n
-    metric = args.metric
-    data   = args.data
-    drop   = args.drop
+    SBJ         = args.subject
+    wl_sec      = args.window_length_sec
+    tr          = args.time_resolution
+    ws_trs      = args.window_space_tr
+    LE_k        = args.LE_k
+    LE_metric   = args.LE_metric
+    p           = args.p
+    TSNE_metric = args.TSNE_metric
+    UMAP_k      = args.UMAP_k
+    UMAP_metric = args.UMAP_metric
+    n           = args.n
+    data        = args.data
+    drop        = args.drop
     print(' ')
     print('++ INFO: Run information')
-    print('         SBJ:   ',SBJ)
-    print('         wl_sec:',wl_sec)
-    print('         tr:    ',tr)
-    print('         ws_trs:',ws_trs)
-    print('         LE_k:  ',LE_k)
-    print('         p:     ',p)
-    print('         UMAP_k:',UMAP_k)
-    print('         n:     ',n)
-    print('         metric:',metric)
-    print('         data:  ',data)
-    print('         drop:  ',drop)
+    print('         SBJ:        ',SBJ)
+    print('         wl_sec:     ',wl_sec)
+    print('         tr:         ',tr)
+    print('         ws_trs:     ',ws_trs)
+    print('         LE_k:       ',LE_k)
+    print('         LE metric:  ',LE_metric)
+    print('         p:          ',p)
+    print('         TSNE metric:',TSNE_metric)
+    print('         UMAP_k:     ',UMAP_k)
+    print('         UMAP metric:',UMAP_metric)
+    print('         n:          ',n)
+    print('         data:       ',data)
+    print('         drop:       ',drop)
     print(' ')
     
     if data == 'ROI':
@@ -126,14 +130,14 @@ def run(args):
     # Compute LE Embedding
     # --------------------
     #dist_metric_dict = {'correlation':correlation, 'cosine':cosine, 'euclidean':euclidean}
-    #LE_df = Laplacain_Eigenmap(drop_SWC_df,k=LE_k,n=n,metric=dist_metric_dict[metric])
+    #LE_df = Laplacain_Eigenmap(drop_SWC_df,k=LE_k,n=n,metric=dist_metric_dict[LE_metric])
     #print('++ INFO: Laplacian Eigenmap embedding computed')
     #print('        Data shape:',LE_df.shape)
     #print(' ')
     
     # Save LE file to outside directory
     # ---------------------------------
-    #out_file = SBJ+'_'+data+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
+    #out_file = SBJ+'_'+data+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+LE_metric+'_'+drop+'.csv'
     #out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
     #LE_df.to_csv(out_path, index=False)
     #print('++ INFO: LE data saved to')
@@ -142,14 +146,14 @@ def run(args):
     
     # Compute TSNE Embedding
     # ----------------------
-    #TSNE_df = T_Stochastic_Neighbor_Embedding(drop_SWC_df,p=p,n=n,metric=metric)
+    #TSNE_df = T_Stochastic_Neighbor_Embedding(drop_SWC_df,p=p,n=n,metric=TSNE_metric)
     #print('++ INFO: TSNE embedding computed')
     #print('         Data shape:',TSNE_df.shape)
     #print(' ')
    
     # Save TSNE file to outside directory
     # ------------------------------
-    #out_file = SBJ+'_'+data+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
+    #out_file = SBJ+'_'+data+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+TSNE_metric+'_'+drop+'.csv'
     #out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
     #TSNE_df.to_csv(out_path, index=False)
     #print('++ INFO: TSNE data saved to')
@@ -158,14 +162,14 @@ def run(args):
     
     # Compute UMAP Embedding
     # -----------------
-    UMAP_df = Uniform_Manifold_Approximation_Projection(drop_SWC_df,k=UMAP_k,n=n,metric=metric)
+    UMAP_df = Uniform_Manifold_Approximation_Projection(drop_SWC_df,k=UMAP_k,n=n,metric=UMAP_metric)
     print('++ INFO: UMAP embedding computed')
     print('        Data shape:',UMAP_df.shape)
     print(' ')
     
     # Save UMAP file to outside directory
     # -----------------------------------
-    out_file = SBJ+'_'+data+'_Null_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
+    out_file = SBJ+'_'+data+'_Null_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(UMAP_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+UMAP_metric+'_'+drop+'.csv'
     out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
     UMAP_df.to_csv(out_path, index=False)
     print('++ INFO: UMAP data saved to')
@@ -178,10 +182,12 @@ def main():
     parser.add_argument("-tr", help="time resolution", dest="time_resolution", type=float, required=True)
     parser.add_argument("-ws_trs",help="window spaces in tr", dest="window_space_tr", type=int, required=True)
     parser.add_argument("-LE_k", help="LE Nearest Neighboor value", dest="LE_k", type=int, required=True)
+    parser.add_argument("-LE_met", help="LE distance metric (correlation, cosine, euclidean)", dest="LE_metric", type=str, required=True)
     parser.add_argument("-p", help="TSNE perplexity value", dest="p", type=int, required=True)
+    parser.add_argument("-TSNE_met", help="TSNE distance metric (correlation, cosine, euclidean)", dest="TSNE_metric", type=str, required=True)
     parser.add_argument("-UMAP_k",help="UMAP Nearest Neighboor value", dest="UMAP_k", type=int, required=True)
+    parser.add_argument("-UMAP_met", help="UMAP distance metric (correlation, cosine, euclidean)", dest="UMAP_metric", type=str, required=True)
     parser.add_argument("-n", help="number of dimensions", dest="n", type=int, required=True)
-    parser.add_argument("-met", help="distance metric (correlation, cosine, euclidean)", dest="metric", type=str, required=True)
     parser.add_argument("-data", help="Data to be randomized (ROI or SWC)", dest="data", type=str, required=True)
     parser.add_argument("-drop", help="Drop inbetween windows or full data (DropData or FullData)", dest="drop", type=str, required=True)
     parser.set_defaults(func=run)
