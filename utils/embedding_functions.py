@@ -132,7 +132,7 @@ def Uniform_Manifold_Approximation_Projection(data_df,k,n,metric):
     embedding = umap.UMAP(n_components=n,
                           n_neighbors=k,
                           min_dist=0.1,
-                          metric='correlation',
+                          metric=metric,
                           random_state=seed)
     data_transformed = embedding.fit_transform(data_df)
     
