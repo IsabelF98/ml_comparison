@@ -30,7 +30,7 @@ hv.extension('bokeh')
 # Load Silhouette Index Data
 # --------------------------
 embedding = 'UMAP' # CHOOSE EMBEDDING ('LE', 'TSNE', or 'UMAP')
-drop = 'DropData'
+drop = 'FullData'
 all_SBJ_SI = {}
 
 for SBJ in SBJ_list:
@@ -75,6 +75,6 @@ hv.Points(plot_df, kdims=[x_axis,'correlation'], label='correlation'))*\
 hv.Points(plot_df, kdims=[x_axis,'cosine'], label='cosine'))*\
 (hv.Area((plot_df[x_axis], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
 hv.Points(plot_df, kdims=[x_axis,'euclidean'], label='euclidean')))\
-.opts(width=700, height=500, xlabel=x_axis, ylabel='Average Silhouette Index',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14})
+.opts(width=700, height=500, xlabel=x_axis, ylabel='Average Silhouette Index',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14}, legend_position='top_left')
 # -
 
