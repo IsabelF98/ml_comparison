@@ -33,6 +33,8 @@ embedding = 'UMAP' # CHOOSE EMBEDDING ('LE', 'TSNE', or 'UMAP')
 drop = 'FullData'
 all_SBJ_SI = {}
 
+SBJ_list.remove('SBJ06')
+
 for SBJ in SBJ_list:
     file_name = SBJ+'_Silh_Idx_'+embedding+'_wl'+str(wl_sec).zfill(3)+'_'+drop+'.csv'
     file_path = osp.join(PRJDIR,'derivatives','Silh_Idx',file_name)
@@ -77,4 +79,19 @@ hv.Points(plot_df, kdims=[x_axis,'cosine'], label='cosine'))*\
 hv.Points(plot_df, kdims=[x_axis,'euclidean'], label='euclidean')))\
 .opts(width=700, height=500, xlabel=x_axis, ylabel='Average Silhouette Index',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14}, legend_position='top_left')
 # -
+import hvplot.pandas
+
+plot_df.head()
+
+all_SBJ_SI['SBJ06'].columns
+
+layout= None
+for sbj in all_SBJ_SI.keys():
+    if layout == None:
+        layout = all_SBJ_SI[sbj].hvplot(x='Unnamed: 0', y='euclidean', label=sbj)
+    else:
+        layout = layout *     all_SBJ_SI[sbj].hvplot(x='Unnamed: 0', y='euclidean', label=sbj)
+
+layout
+
 
