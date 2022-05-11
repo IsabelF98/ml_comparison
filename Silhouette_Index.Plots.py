@@ -21,6 +21,8 @@ import pandas as pd
 import numpy as np
 import os.path as osp
 from utils.data_info import PRJDIR, LE_k_list, p_list, UMAP_k_list, wl_sec, tr, SBJ_list, task_labels
+from statannotations.Annotator import Annotator
+import seaborn as sns
 import matplotlib.pyplot as plt
 import holoviews as hv
 import panel as pn
@@ -32,8 +34,6 @@ hv.extension('bokeh')
 embedding = 'UMAP' # CHOOSE EMBEDDING ('LE', 'TSNE', or 'UMAP')
 drop = 'FullData'
 all_SBJ_SI = {}
-
-SBJ_list.remove('SBJ06')
 
 for SBJ in SBJ_list:
     file_name = SBJ+'_Silh_Idx_'+embedding+'_wl'+str(wl_sec).zfill(3)+'_'+drop+'.csv'
@@ -47,6 +47,8 @@ for SBJ in SBJ_list:
 # ------------------------------------------------------------
 avg_group_SI = pd.concat([all_SBJ_SI[SBJ] for SBJ in SBJ_list]).groupby(level=0).mean() # Average
 sem_group_SI = pd.concat([all_SBJ_SI[SBJ] for SBJ in SBJ_list]).groupby(level=0).sem()  # Standerd Error
+
+# ## Scatter Plot
 
 # +
 # Plot data frame
@@ -71,14 +73,44 @@ if embedding == 'LE' or embedding == 'UMAP':
 elif embedding == 'TSNE':
     x_axis = 'perplexity value'
 
-((hv.Area((plot_df[x_axis], plot_df['correlation +SE'], plot_df['correlation -SE']), vdims=['correlation +SE', 'correlation -SE']).opts(alpha=0.3)*\
-hv.Points(plot_df, kdims=[x_axis,'correlation'], label='correlation'))*\
-(hv.Area((plot_df[x_axis], plot_df['cosine +SE'], plot_df['cosine -SE']), vdims=['cosine +SE', 'cosine -SE']).opts(alpha=0.3)*\
-hv.Points(plot_df, kdims=[x_axis,'cosine'], label='cosine'))*\
+#((hv.Area((plot_df[x_axis], plot_df['correlation +SE'], plot_df['correlation -SE']), vdims=['correlation +SE', 'correlation -SE']).opts(alpha=0.3)*\
+#hv.Points(plot_df, kdims=[x_axis,'correlation'], label='correlation'))*\
+#(hv.Area((plot_df[x_axis], plot_df['cosine +SE'], plot_df['cosine -SE']), vdims=['cosine +SE', 'cosine -SE']).opts(alpha=0.3)*\
+#hv.Points(plot_df, kdims=[x_axis,'cosine'], label='cosine'))*\
 (hv.Area((plot_df[x_axis], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
-hv.Points(plot_df, kdims=[x_axis,'euclidean'], label='euclidean')))\
+hv.Points(plot_df, kdims=[x_axis,'euclidean'], label='euclidean'))\
 .opts(width=700, height=500, xlabel=x_axis, ylabel='Average Silhouette Index',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14}, legend_position='top_left')
 # -
+# ## Box Plot
+
+k = 160
+k_index = UMAP_k_list.index(k)
+
+SI_boxplot_df = pd.DataFrame(columns=['SBJ', 'Distance Metric', 'Silhouette index'])
+for SBJ in SBJ_list:
+    SI_cor = all_SBJ_SI[SBJ].loc[k_index, 'correlation']
+    SI_cos = all_SBJ_SI[SBJ].loc[k_index, 'cosine']
+    SI_euc = all_SBJ_SI[SBJ].loc[k_index, 'euclidean']
+    SI_boxplot_df.loc[SI_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'correlation', 'Silhouette index': SI_cor}
+    SI_boxplot_df.loc[SI_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'cosine', 'Silhouette index': SI_cos}
+    SI_boxplot_df.loc[SI_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'euclidean', 'Silhouette index': SI_euc}
+
+# +
+x = 'Distance Metric'
+y = 'Silhouette index'
+order = ['correlation','cosine','euclidean']
+pairs=[("correlation", "cosine"), ("cosine", "euclidean"), ("euclidean", "correlation")]
+
+sns.set(rc = {'figure.figsize':(9,7)})
+ax    = sns.boxplot(x=x, y=y, data=SI_boxplot_df, order=order)
+annot = Annotator(ax, pairs, data=SI_boxplot_df, x=x, y=y, order=order)
+annot.configure(test='t-test_paired', verbose=2)
+annot.apply_test()
+annot.annotate()
+# -
+
+# ## Test
+
 import hvplot.pandas
 
 plot_df.head()
