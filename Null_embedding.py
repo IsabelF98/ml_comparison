@@ -129,36 +129,36 @@ def run(args):
     
     # Compute LE Embedding
     # --------------------
-    #dist_metric_dict = {'correlation':correlation, 'cosine':cosine, 'euclidean':euclidean}
-    #LE_df = Laplacain_Eigenmap(drop_SWC_df,k=LE_k,n=n,metric=dist_metric_dict[LE_metric])
-    #print('++ INFO: Laplacian Eigenmap embedding computed')
-    #print('        Data shape:',LE_df.shape)
-    #print(' ')
+    dist_metric_dict = {'correlation':correlation, 'cosine':cosine, 'euclidean':euclidean}
+    LE_df = Laplacain_Eigenmap(drop_SWC_df,k=LE_k,n=n,metric=dist_metric_dict[LE_metric])
+    print('++ INFO: Laplacian Eigenmap embedding computed')
+    print('        Data shape:',LE_df.shape)
+    print(' ')
     
     # Save LE file to outside directory
     # ---------------------------------
-    #out_file = SBJ+'_'+data+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+LE_metric+'_'+drop+'.csv'
-    #out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
-    #LE_df.to_csv(out_path, index=False)
-    #print('++ INFO: LE data saved to')
-    #print('       ',out_path)
-    #print(' ')
+    out_file = SBJ+'_'+data+'_Null_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(LE_k).zfill(3)+'_n'+str(n).zfill(2)+'_'+LE_metric+'_'+drop+'.csv'
+    out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
+    LE_df.to_csv(out_path, index=False)
+    print('++ INFO: LE data saved to')
+    print('       ',out_path)
+    print(' ')
     
     # Compute TSNE Embedding
     # ----------------------
-    #TSNE_df = T_Stochastic_Neighbor_Embedding(drop_SWC_df,p=p,n=n,metric=TSNE_metric)
-    #print('++ INFO: TSNE embedding computed')
-    #print('         Data shape:',TSNE_df.shape)
-    #print(' ')
+    TSNE_df = T_Stochastic_Neighbor_Embedding(drop_SWC_df,p=p,n=n,metric=TSNE_metric)
+    print('++ INFO: TSNE embedding computed')
+    print('         Data shape:',TSNE_df.shape)
+    print(' ')
    
     # Save TSNE file to outside directory
     # ------------------------------
-    #out_file = SBJ+'_'+data+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+TSNE_metric+'_'+drop+'.csv'
-    #out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
-    #TSNE_df.to_csv(out_path, index=False)
-    #print('++ INFO: TSNE data saved to')
-    #print('       ',out_path)
-    #print(' ')
+    out_file = SBJ+'_'+data+'_Null_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+TSNE_metric+'_'+drop+'.csv'
+    out_path = osp.join(PRJDIR,'derivatives','Null_Data',out_file)
+    TSNE_df.to_csv(out_path, index=False)
+    print('++ INFO: TSNE data saved to')
+    print('       ',out_path)
+    print(' ')
     
     # Compute UMAP Embedding
     # -----------------

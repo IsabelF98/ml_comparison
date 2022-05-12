@@ -76,7 +76,7 @@ def group_SI(data_dict, label_df, label, full_data):
     return SI_df
 
 
-def group_F1(data_dict, label_df, label, n):
+def group_F1(data_dict, label_df, label, n, full_data):
     """
     This function computes the F1 accuracy for each embedding in a group of embeddings.
     
@@ -87,6 +87,7 @@ def group_F1(data_dict, label_df, label, n):
     label_df: (pd.DataFrame) A data frame of the labels you wish score by (e.x. task labels)
     label: (str) The name of the label you are scoring by (e.x. task)
     n: (int) Number of dimensions for embedding
+    full_data: (bool) Full data set (True) or dropped windows (False)
     
     OUTPUT
     ------
@@ -97,17 +98,29 @@ def group_F1(data_dict, label_df, label, n):
     train_idx = (0, 363) # Training set index range
     test_idx  = (364, 728) # Testing set index range
     
-    train_label_df = label_df.loc[train_idx[0]:train_idx[1]].copy() # Training labels
-    test_label_df  = label_df.loc[test_idx[0]:test_idx[1]].copy() # Testing labels
-    
     group_list = list(data_dict.keys())
     F1_list    = []
 
     for key in group_list:
         embed_df = data_dict[key]
-        # Split data
-        train_embed_df = embed_df.loc[train_idx[0]:train_idx[1]].copy()
-        test_embed_df  = embed_df.loc[test_idx[0]:test_idx[1]].copy()
+        if full_data:
+            # Drop inbetween windows
+            drop_index    = label_df.index[label_df[label] == 'Inbetween']
+            drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+            drop_label_df = label_df.drop(drop_index).reset_index(drop=True)
+            # Split data
+            train_embed_df = drop_embed_df.loc[train_idx[0]:train_idx[1]].copy()
+            test_embed_df  = drop_embed_df.loc[test_idx[0]:test_idx[1]].copy()
+            # Training and testing labels
+            train_label_df = drop_label_df.loc[train_idx[0]:train_idx[1]].copy()
+            test_label_df  = drop_label_df.loc[test_idx[0]:test_idx[1]].copy()
+        else:
+            # Split data
+            train_embed_df = embed_df.loc[train_idx[0]:train_idx[1]].copy()
+            test_embed_df  = embed_df.loc[test_idx[0]:test_idx[1]].copy()
+            # Training and testing labels
+            train_label_df = label_df.loc[train_idx[0]:train_idx[1]].copy()
+            test_label_df  = label_df.loc[test_idx[0]:test_idx[1]].copy()
         # Compute LR
         Log_Reg      = LogisticRegression(solver='liblinear', penalty='l2', random_state=0)
         data_Log_Reg = Log_Reg.fit(train_embed_df[[str(i)+'_norm' for i in range(1,n+1)]], train_label_df[label])
@@ -125,7 +138,6 @@ def group_F1(data_dict, label_df, label, n):
 
 
 n         = 3
-metric    = 'correlation'
 drop      = 'FullData'
 full_data = True
 
@@ -133,6 +145,7 @@ full_data = True
 # ***
 
 LE_k = 80
+metric = 'correlation'
 
 # ### Original Data
 
@@ -154,7 +167,7 @@ print('         Data shape', orig_LE_SI_df.shape)
 
 # Compute group F1 Accuracy
 # -------------------------
-orig_LE_F1_df = group_F1(all_orig_LE, task_df, 'Task', n)
+orig_LE_F1_df = group_F1(all_orig_LE, task_df, 'Task', n, full_data=full_data)
 print('++ INFO: F1 data frame computed')
 print('         Data shape', orig_LE_F1_df.shape)
 
@@ -179,7 +192,7 @@ print('         Data shape', null1_LE_SI_df.shape)
 
 # Compute group F1 Accuracy
 # -------------------------
-null1_LE_F1_df = group_F1(all_null1_LE, task_df, 'Task', n)
+null1_LE_F1_df = group_F1(all_null1_LE, task_df, 'Task', n, full_data=full_data)
 print('++ INFO: F1 data frame computed')
 print('         Data shape', null1_LE_F1_df.shape)
 
@@ -204,7 +217,7 @@ print('         Data shape', null2_LE_SI_df.shape)
 
 # Compute group F1 Accuracy
 # -------------------------
-null2_LE_F1_df = group_F1(all_null2_LE, task_df, 'Task', n)
+null2_LE_F1_df = group_F1(all_null2_LE, task_df, 'Task', n, full_data=full_data)
 print('++ INFO: F1 data frame computed')
 print('         Data shape', null2_LE_F1_df.shape)
 
@@ -212,6 +225,7 @@ print('         Data shape', null2_LE_F1_df.shape)
 # ***
 
 p = 70
+metric = 'correlation'
 
 # ### Original Data
 
@@ -233,7 +247,7 @@ print('         Data shape', orig_TSNE_SI_df.shape)
 
 # Compute group F1 Accuracy
 # -------------------------
-orig_TSNE_F1_df = group_F1(all_orig_TSNE, task_df, 'Task', n)
+orig_TSNE_F1_df = group_F1(all_orig_TSNE, task_df, 'Task', n, full_data=full_data)
 print('++ INFO: F1 data frame computed')
 print('         Data shape', orig_TSNE_F1_df.shape)
 
@@ -258,7 +272,7 @@ print('         Data shape', null1_TSNE_SI_df.shape)
 
 # Compute group F1 Accuracy
 # -------------------------
-null1_TSNE_F1_df = group_F1(all_null1_TSNE, task_df, 'Task', n)
+null1_TSNE_F1_df = group_F1(all_null1_TSNE, task_df, 'Task', n, full_data=full_data)
 print('++ INFO: F1 data frame computed')
 print('         Data shape', null1_TSNE_F1_df.shape)
 
@@ -283,14 +297,15 @@ print('         Data shape', null2_TSNE_SI_df.shape)
 
 # Compute group F1 Accuracy
 # -------------------------
-null2_TSNE_F1_df = group_F1(all_null2_TSNE, task_df, 'Task', n)
+null2_TSNE_F1_df = group_F1(all_null2_TSNE, task_df, 'Task', n, full_data=full_data)
 print('++ INFO: F1 data frame computed')
 print('         Data shape', null2_TSNE_F1_df.shape)
 
 # ## UMAP
 # ***
 
-UMAP_k = 10
+UMAP_k = 160
+metric = 'euclidean'
 
 # ### Origianl Data
 
@@ -312,7 +327,7 @@ print('         Data shape', orig_UMAP_SI_df.shape)
 
 # Compute group F1 Accuracy
 # -------------------------
-orig_UMAP_F1_df = group_F1(all_orig_UMAP, task_df, 'Task', n)
+orig_UMAP_F1_df = group_F1(all_orig_UMAP, task_df, 'Task', n, full_data=full_data)
 print('++ INFO: F1 data frame computed')
 print('         Data shape', orig_UMAP_F1_df.shape)
 
@@ -337,7 +352,7 @@ print('         Data shape', null1_UMAP_SI_df.shape)
 
 # Compute group F1 Accuracy
 # -------------------------
-null1_UMAP_F1_df = group_F1(all_null1_UMAP, task_df, 'Task', n)
+null1_UMAP_F1_df = group_F1(all_null1_UMAP, task_df, 'Task', n, full_data=full_data)
 print('++ INFO: F1 data frame computed')
 print('         Data shape', null1_UMAP_F1_df.shape)
 
@@ -362,7 +377,7 @@ print('         Data shape', null2_UMAP_SI_df.shape)
 
 # Compute group F1 Accuracy
 # -------------------------
-null2_UMAP_F1_df = group_F1(all_null2_UMAP, task_df, 'Task', n)
+null2_UMAP_F1_df = group_F1(all_null2_UMAP, task_df, 'Task', n, full_data=full_data)
 print('++ INFO: F1 data frame computed')
 print('         Data shape', null2_UMAP_F1_df.shape)
 
