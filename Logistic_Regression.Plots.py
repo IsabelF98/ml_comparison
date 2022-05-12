@@ -21,6 +21,8 @@ import pandas as pd
 import numpy as np
 import os.path as osp
 from utils.data_info import PRJDIR, LE_k_list, p_list, UMAP_k_list, wl_sec, tr, SBJ_list, task_labels
+from statannotations.Annotator import Annotator
+import seaborn as sns
 import holoviews as hv
 import panel as pn
 hv.extension('bokeh')
@@ -154,5 +156,34 @@ hv.Points(plot_df, kdims=['k-NN value' ,'cosine'], label='cosine'))*\
 (hv.Area((plot_df['k-NN value' ], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
 hv.Points(plot_df, kdims=['k-NN value' ,'euclidean'], label='euclidean')))\
 .opts(width=700, height=500, xlabel='k-NN value' , ylabel='Average F1 Accuracy',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14}, legend_position='top_left')
+
+# ## Box Plot
+# ***
+
+k = 200
+k_index = UMAP_k_list.index(k)
+
+F1_boxplot_df = pd.DataFrame(columns=['SBJ', 'Distance Metric', 'F1 Accuracy'])
+for SBJ in SBJ_list:
+    F1_cor = all_SBJ_acur[SBJ].loc[k_index, 'correlation']
+    F1_cos = all_SBJ_acur[SBJ].loc[k_index, 'cosine']
+    F1_euc = all_SBJ_acur[SBJ].loc[k_index, 'euclidean']
+    F1_boxplot_df.loc[F1_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'correlation', 'F1 Accuracy': F1_cor}
+    F1_boxplot_df.loc[F1_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'cosine', 'F1 Accuracy': F1_cos}
+    F1_boxplot_df.loc[F1_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'euclidean', 'F1 Accuracy': F1_euc}
+
+# +
+x = 'Distance Metric'
+y = 'F1 Accuracy'
+order = ['correlation','cosine','euclidean']
+pairs=[("correlation", "cosine"), ("cosine", "euclidean"), ("euclidean", "correlation")]
+
+sns.set(rc = {'figure.figsize':(9,7)})
+ax    = sns.boxplot(x=x, y=y, data=F1_boxplot_df, order=order)
+annot = Annotator(ax, pairs, data=F1_boxplot_df, x=x, y=y, order=order)
+annot.configure(test='t-test_paired', verbose=2)
+annot.apply_test()
+annot.annotate()
+# -
 
 

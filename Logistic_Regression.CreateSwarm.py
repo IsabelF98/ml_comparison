@@ -35,7 +35,7 @@ os.system('echo "#swarm -f ./Logistic_Regression.SWARM.sh -g 30 -t 30 --time 8:0
 
 dist_metric_list = ['correlation', 'cosine', 'euclidean']
 n = 3
-#drop = 'FullData'
+drop = 'FullData'
 
 # Laplacian Eigenmap
 embedding = 'LE'
