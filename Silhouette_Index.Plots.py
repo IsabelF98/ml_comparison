@@ -73,14 +73,48 @@ if embedding == 'LE' or embedding == 'UMAP':
 elif embedding == 'TSNE':
     x_axis = 'perplexity value'
 
-#((hv.Area((plot_df[x_axis], plot_df['correlation +SE'], plot_df['correlation -SE']), vdims=['correlation +SE', 'correlation -SE']).opts(alpha=0.3)*\
-#hv.Points(plot_df, kdims=[x_axis,'correlation'], label='correlation'))*\
-#(hv.Area((plot_df[x_axis], plot_df['cosine +SE'], plot_df['cosine -SE']), vdims=['cosine +SE', 'cosine -SE']).opts(alpha=0.3)*\
-#hv.Points(plot_df, kdims=[x_axis,'cosine'], label='cosine'))*\
+((hv.Area((plot_df[x_axis], plot_df['correlation +SE'], plot_df['correlation -SE']), vdims=['correlation +SE', 'correlation -SE']).opts(alpha=0.3)*\
+hv.Points(plot_df, kdims=[x_axis,'correlation'], label='correlation'))*\
+(hv.Area((plot_df[x_axis], plot_df['cosine +SE'], plot_df['cosine -SE']), vdims=['cosine +SE', 'cosine -SE']).opts(alpha=0.3)*\
+hv.Points(plot_df, kdims=[x_axis,'cosine'], label='cosine'))*\
 (hv.Area((plot_df[x_axis], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
 hv.Points(plot_df, kdims=[x_axis,'euclidean'], label='euclidean'))\
 .opts(width=700, height=500, xlabel=x_axis, ylabel='Average Silhouette Index',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14}, legend_position='top_left')
+# +
+if embedding == 'LE' or embedding == 'UMAP':
+    x_axis = 'k-NN value' 
+elif embedding == 'TSNE':
+    x_axis = 'perplexity value'
+
+SI_pointplot_df = pd.DataFrame(columns=['SBJ', x_axis, 'Distance Metric', 'Silhouette Index'])
+for SBJ in SBJ_list:
+    SI_df = all_SBJ_SI[SBJ]
+    for metric in ['correlation','cosine','euclidean']:
+        temp_df = pd.DataFrame({'SBJ': [SBJ]*SI_df.shape[0],
+                                x_axis: SI_df['Unnamed: 0'].values,
+                                'Distance Metric': [metric]*SI_df.shape[0],
+                                'Silhouette Index': SI_df[metric].values})
+        SI_pointplot_df = SI_pointplot_df.append(temp_df).reset_index(drop=True)
+
+# +
+x = x_axis
+y = 'Silhouette Index'
+hue = 'Distance Metric'
+#best_metric = 'euclidean'
+#best_k = 160
+
+#pairs = [((best_k, best_metric),(k, best_metric)) for k in UMAP_k_list]
+#pairs.remove(((best_k, best_metric),(best_k, best_metric)))
+
+sns.set(rc = {'figure.figsize':(14,7)})
+ax    = sns.pointplot(x=x, y=y, hue=hue, data=SI_pointplot_df, capsize=0.1)
+#annot = Annotator(ax, pairs, data=SI_pointplot_df, x=x, y=y, hue=hue)
+#annot.configure(test='t-test_paired', verbose=2)
+#annot.apply_test()
+#annot.annotate()
+plt.legend(loc='upper left', bbox_to_anchor=(1.03, 1))
 # -
+
 # ## Box Plot
 
 k = 160
