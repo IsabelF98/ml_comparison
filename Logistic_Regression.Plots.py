@@ -23,6 +23,7 @@ import os.path as osp
 from utils.data_info import PRJDIR, LE_k_list, p_list, UMAP_k_list, wl_sec, tr, SBJ_list, task_labels
 from statannotations.Annotator import Annotator
 import seaborn as sns
+import matplotlib.pyplot as plt
 import holoviews as hv
 import panel as pn
 hv.extension('bokeh')
@@ -73,6 +74,38 @@ hv.Points(plot_df, kdims=['k-NN value' ,'cosine'], label='cosine'))*\
 hv.Points(plot_df, kdims=['k-NN value' ,'euclidean'], label='euclidean')))\
 .opts(width=700, height=500, xlabel='k-NN value' , ylabel='Average F1 Accuracy',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14})
 
+# +
+x_axis = 'k-NN value' 
+
+F1_pointplot_df = pd.DataFrame(columns=['SBJ', x_axis, 'Distance Metric', 'F1 Accuracy'])
+for SBJ in SBJ_list:
+    F1_df = all_SBJ_acur[SBJ]
+    for metric in ['correlation','cosine','euclidean']:
+        temp_df = pd.DataFrame({'SBJ': [SBJ]*F1_df.shape[0],
+                                x_axis: F1_df['k value'].values,
+                                'Distance Metric': [metric]*F1_df.shape[0],
+                                'F1 Accuracy': F1_df[metric].values})
+        F1_pointplot_df = F1_pointplot_df.append(temp_df).reset_index(drop=True)
+
+# +
+x = x_axis
+y = 'F1 Accuracy'
+hue = 'Distance Metric'
+best_metric = 'correlation'
+best_k = 80
+
+pairs = [((best_k, best_metric),(k, best_metric)) for k in LE_k_list]
+pairs.remove(((best_k, best_metric),(best_k, best_metric)))
+
+sns.set(rc = {'figure.figsize':(14,7)})
+ax    = sns.pointplot(x=x, y=y, hue=hue, data=F1_pointplot_df, capsize=0.1)
+annot = Annotator(ax, pairs, data=F1_pointplot_df, x=x, y=y, hue=hue)
+annot.configure(test='t-test_paired', verbose=2)
+annot.apply_test()
+annot.annotate()
+plt.legend(loc='upper left', bbox_to_anchor=(1.03, 1))
+# -
+
 # ## TSNE
 # ***
 
@@ -80,7 +113,7 @@ hv.Points(plot_df, kdims=['k-NN value' ,'euclidean'], label='euclidean')))\
 # -----------------------
 all_SBJ_acur = {}
 for SBJ in SBJ_list:
-    F1_acur_df = pd.DataFrame(p_list, columns=['k value'])
+    F1_acur_df = pd.DataFrame(p_list, columns=['p value'])
     for metric in dist_metric_list:
         metric_acur_list = []
         for p in p_list:
@@ -114,6 +147,38 @@ hv.Points(plot_df, kdims=['perplexity value' ,'cosine'], label='cosine'))*\
 (hv.Area((plot_df['perplexity value' ], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
 hv.Points(plot_df, kdims=['perplexity value' ,'euclidean'], label='euclidean')))\
 .opts(width=700, height=500, xlabel='perplexity value' , ylabel='Average F1 Accuracy',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14})
+
+# +
+x_axis = 'perplexity value' 
+
+F1_pointplot_df = pd.DataFrame(columns=['SBJ', x_axis, 'Distance Metric', 'F1 Accuracy'])
+for SBJ in SBJ_list:
+    F1_df = all_SBJ_acur[SBJ]
+    for metric in ['correlation','cosine','euclidean']:
+        temp_df = pd.DataFrame({'SBJ': [SBJ]*F1_df.shape[0],
+                                x_axis: F1_df['p value'].values,
+                                'Distance Metric': [metric]*F1_df.shape[0],
+                                'F1 Accuracy': F1_df[metric].values})
+        F1_pointplot_df = F1_pointplot_df.append(temp_df).reset_index(drop=True)
+
+# +
+x = x_axis
+y = 'F1 Accuracy'
+hue = 'Distance Metric'
+best_metric = 'cosine'
+best_p = 50
+
+pairs = [((best_p, best_metric),(p, best_metric)) for p in p_list]
+pairs.remove(((best_p, best_metric),(best_p, best_metric)))
+
+sns.set(rc = {'figure.figsize':(14,7)})
+ax    = sns.pointplot(x=x, y=y, hue=hue, data=F1_pointplot_df, capsize=0.1)
+annot = Annotator(ax, pairs, data=F1_pointplot_df, x=x, y=y, hue=hue)
+annot.configure(test='t-test_paired', verbose=2)
+annot.apply_test()
+annot.annotate()
+plt.legend(loc='upper left', bbox_to_anchor=(1.03, 1))
+# -
 
 # ## UMAP
 # ***
@@ -156,6 +221,38 @@ hv.Points(plot_df, kdims=['k-NN value' ,'cosine'], label='cosine'))*\
 (hv.Area((plot_df['k-NN value' ], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
 hv.Points(plot_df, kdims=['k-NN value' ,'euclidean'], label='euclidean')))\
 .opts(width=700, height=500, xlabel='k-NN value' , ylabel='Average F1 Accuracy',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14}, legend_position='top_left')
+
+# +
+x_axis = 'k-NN value' 
+
+F1_pointplot_df = pd.DataFrame(columns=['SBJ', x_axis, 'Distance Metric', 'F1 Accuracy'])
+for SBJ in SBJ_list:
+    F1_df = all_SBJ_acur[SBJ]
+    for metric in ['correlation','cosine','euclidean']:
+        temp_df = pd.DataFrame({'SBJ': [SBJ]*F1_df.shape[0],
+                                x_axis: F1_df['k value'].values,
+                                'Distance Metric': [metric]*F1_df.shape[0],
+                                'F1 Accuracy': F1_df[metric].values})
+        F1_pointplot_df = F1_pointplot_df.append(temp_df).reset_index(drop=True)
+
+# +
+x = x_axis
+y = 'F1 Accuracy'
+hue = 'Distance Metric'
+best_metric = 'euclidean'
+best_k = 200
+
+pairs = [((best_k, best_metric),(k, best_metric)) for k in UMAP_k_list]
+pairs.remove(((best_k, best_metric),(best_k, best_metric)))
+
+sns.set(rc = {'figure.figsize':(14,7)})
+ax    = sns.pointplot(x=x, y=y, hue=hue, data=F1_pointplot_df, capsize=0.1)
+annot = Annotator(ax, pairs, data=F1_pointplot_df, x=x, y=y, hue=hue)
+annot.configure(test='t-test_paired', verbose=2)
+annot.apply_test()
+annot.annotate()
+plt.legend(loc='upper left', bbox_to_anchor=(1.03, 1))
+# -
 
 # ## Box Plot
 # ***
