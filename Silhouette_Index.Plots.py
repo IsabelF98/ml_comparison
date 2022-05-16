@@ -15,7 +15,7 @@
 
 # # Silhouette Index Plots
 #
-# This notebook is for creating the plots of silhouette index for each manifold learning technique.
+# This notebook is for creating the plots of silhouette index values for each manifold learning technique.
 
 import pandas as pd
 import numpy as np
@@ -43,12 +43,13 @@ for SBJ in SBJ_list:
     print('++ INFO: Data loaded for',SBJ)
 # -
 
+# ## Scatter Plot 1
+# Plot with holoviews
+
 # Compute average and standard error of group silhouette index
 # ------------------------------------------------------------
 avg_group_SI = pd.concat([all_SBJ_SI[SBJ] for SBJ in SBJ_list]).groupby(level=0).mean() # Average
 sem_group_SI = pd.concat([all_SBJ_SI[SBJ] for SBJ in SBJ_list]).groupby(level=0).sem()  # Standerd Error
-
-# ## Scatter Plot
 
 # +
 # Plot data frame
@@ -80,7 +81,13 @@ hv.Points(plot_df, kdims=[x_axis,'cosine'], label='cosine'))*\
 (hv.Area((plot_df[x_axis], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
 hv.Points(plot_df, kdims=[x_axis,'euclidean'], label='euclidean')))\
 .opts(width=700, height=500, xlabel=x_axis, ylabel='Average Silhouette Index',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14}, legend_position='top_left')
+# -
+# ## Scatter Plot 2
+# Using seaborn w/ t-test
+
 # +
+# Scatter plot data frame
+# -----------------------
 if embedding == 'LE' or embedding == 'UMAP':
     x_axis = 'k-NN value' 
 elif embedding == 'TSNE':
@@ -97,6 +104,8 @@ for SBJ in SBJ_list:
         SI_pointplot_df = SI_pointplot_df.append(temp_df).reset_index(drop=True)
 
 # +
+# Scatter plot with t-test
+# ------------------------
 x = x_axis
 y = 'Silhouette Index'
 hue = 'Distance Metric'
@@ -116,10 +125,15 @@ plt.legend(loc='upper left', bbox_to_anchor=(1.03, 1))
 # -
 
 # ## Box Plot
+# Comparing distance metrics for best k or p value
 
-k = 160
-k_index = UMAP_k_list.index(k)
+# Embedding parameters
+# --------------------
+best_k = 160 # best k or p value
+k_index = UMAP_k_list.index(best_k) # k or p value index (change list acording to method)
 
+# Bok plot data frame
+# -------------------
 SI_boxplot_df = pd.DataFrame(columns=['SBJ', 'Distance Metric', 'Silhouette index'])
 for SBJ in SBJ_list:
     SI_cor = all_SBJ_SI[SBJ].loc[k_index, 'correlation']
@@ -130,6 +144,8 @@ for SBJ in SBJ_list:
     SI_boxplot_df.loc[SI_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'euclidean', 'Silhouette index': SI_euc}
 
 # +
+# Box plot with t-test
+# --------------------
 x = 'Distance Metric'
 y = 'Silhouette index'
 order = ['correlation','cosine','euclidean']
@@ -141,23 +157,3 @@ annot = Annotator(ax, pairs, data=SI_boxplot_df, x=x, y=y, order=order)
 annot.configure(test='t-test_paired', verbose=2)
 annot.apply_test()
 annot.annotate()
-# -
-
-# ## Test
-
-import hvplot.pandas
-
-plot_df.head()
-
-all_SBJ_SI['SBJ06'].columns
-
-layout= None
-for sbj in all_SBJ_SI.keys():
-    if layout == None:
-        layout = all_SBJ_SI[sbj].hvplot(x='Unnamed: 0', y='euclidean', label=sbj)
-    else:
-        layout = layout *     all_SBJ_SI[sbj].hvplot(x='Unnamed: 0', y='euclidean', label=sbj)
-
-layout
-
-

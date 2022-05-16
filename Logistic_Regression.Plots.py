@@ -51,6 +51,9 @@ for SBJ in SBJ_list:
         F1_acur_df[metric] = metric_acur_list
     all_SBJ_acur[SBJ] = F1_acur_df
 
+# ## Scatter Plot 1
+# Plot with holoviews
+
 # Compute average and standard error of group F1 accuracy
 # --------------------------------------------------------
 avg_group_acur = pd.concat([all_SBJ_acur[SBJ] for SBJ in SBJ_list]).groupby(level=0).mean() # Average
@@ -74,7 +77,12 @@ hv.Points(plot_df, kdims=['k-NN value' ,'cosine'], label='cosine'))*\
 hv.Points(plot_df, kdims=['k-NN value' ,'euclidean'], label='euclidean')))\
 .opts(width=700, height=500, xlabel='k-NN value' , ylabel='Average F1 Accuracy',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14})
 
+# ## Scatter Plot 2
+# Using seaborn w/ t-test
+
 # +
+# Scatter plot data frame
+# -----------------------
 x_axis = 'k-NN value' 
 
 F1_pointplot_df = pd.DataFrame(columns=['SBJ', x_axis, 'Distance Metric', 'F1 Accuracy'])
@@ -88,6 +96,8 @@ for SBJ in SBJ_list:
         F1_pointplot_df = F1_pointplot_df.append(temp_df).reset_index(drop=True)
 
 # +
+# Scatter plot with t-test
+# ------------------------
 x = x_axis
 y = 'F1 Accuracy'
 hue = 'Distance Metric'
@@ -125,6 +135,9 @@ for SBJ in SBJ_list:
         F1_acur_df[metric] = metric_acur_list
     all_SBJ_acur[SBJ] = F1_acur_df
 
+# ## Scatter Plot 1
+# Plot with holoviews
+
 # Compute average and standard error of group F1 accuracy
 # --------------------------------------------------------
 avg_group_acur = pd.concat([all_SBJ_acur[SBJ] for SBJ in SBJ_list]).groupby(level=0).mean() # Average
@@ -148,7 +161,12 @@ hv.Points(plot_df, kdims=['perplexity value' ,'cosine'], label='cosine'))*\
 hv.Points(plot_df, kdims=['perplexity value' ,'euclidean'], label='euclidean')))\
 .opts(width=700, height=500, xlabel='perplexity value' , ylabel='Average F1 Accuracy',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14})
 
+# ## Scatter Plot 2
+# Using seaborn w/ t-test
+
 # +
+# Scatter plot data frame
+# -----------------------
 x_axis = 'perplexity value' 
 
 F1_pointplot_df = pd.DataFrame(columns=['SBJ', x_axis, 'Distance Metric', 'F1 Accuracy'])
@@ -162,6 +180,8 @@ for SBJ in SBJ_list:
         F1_pointplot_df = F1_pointplot_df.append(temp_df).reset_index(drop=True)
 
 # +
+# Scatter plot w/ t-test
+# ----------------------
 x = x_axis
 y = 'F1 Accuracy'
 hue = 'Distance Metric'
@@ -199,6 +219,9 @@ for SBJ in SBJ_list:
         F1_acur_df[metric] = metric_acur_list
     all_SBJ_acur[SBJ] = F1_acur_df
 
+# ## Scatter Plot 1
+# Plot with holoviews
+
 # Compute average and standard error of group F1 accuracy
 # --------------------------------------------------------
 avg_group_acur = pd.concat([all_SBJ_acur[SBJ] for SBJ in SBJ_list]).groupby(level=0).mean() # Average
@@ -222,7 +245,12 @@ hv.Points(plot_df, kdims=['k-NN value' ,'cosine'], label='cosine'))*\
 hv.Points(plot_df, kdims=['k-NN value' ,'euclidean'], label='euclidean')))\
 .opts(width=700, height=500, xlabel='k-NN value' , ylabel='Average F1 Accuracy',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14}, legend_position='top_left')
 
+# ## Scatter Plot 2
+# Using seaborn w/ t-test
+
 # +
+# Scatter plot data frame
+# -----------------------
 x_axis = 'k-NN value' 
 
 F1_pointplot_df = pd.DataFrame(columns=['SBJ', x_axis, 'Distance Metric', 'F1 Accuracy'])
@@ -236,6 +264,8 @@ for SBJ in SBJ_list:
         F1_pointplot_df = F1_pointplot_df.append(temp_df).reset_index(drop=True)
 
 # +
+# Scatter plot w/ t-test
+# ----------------------
 x = x_axis
 y = 'F1 Accuracy'
 hue = 'Distance Metric'
@@ -257,9 +287,13 @@ plt.legend(loc='upper left', bbox_to_anchor=(1.03, 1))
 # ## Box Plot
 # ***
 
-k = 200
-k_index = UMAP_k_list.index(k)
+# Embedding parameters
+# --------------------
+best_k = 200 # best k or p value
+k_index = UMAP_k_list.index(best_k) # k or p value index (change list acording to method)
 
+# Blox plot data frame
+# --------------------
 F1_boxplot_df = pd.DataFrame(columns=['SBJ', 'Distance Metric', 'F1 Accuracy'])
 for SBJ in SBJ_list:
     F1_cor = all_SBJ_acur[SBJ].loc[k_index, 'correlation']
@@ -270,6 +304,8 @@ for SBJ in SBJ_list:
     F1_boxplot_df.loc[F1_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'euclidean', 'F1 Accuracy': F1_euc}
 
 # +
+# Box plot w/ t-test
+# ------------------
 x = 'Distance Metric'
 y = 'F1 Accuracy'
 order = ['correlation','cosine','euclidean']
