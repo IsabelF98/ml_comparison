@@ -75,7 +75,7 @@ hv.Points(plot_df, kdims=['k-NN value' ,'correlation'], label='correlation'))*\
 hv.Points(plot_df, kdims=['k-NN value' ,'cosine'], label='cosine'))*\
 (hv.Area((plot_df['k-NN value' ], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
 hv.Points(plot_df, kdims=['k-NN value' ,'euclidean'], label='euclidean')))\
-.opts(width=700, height=500, xlabel='k-NN value' , ylabel='Average F1 Accuracy',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14})
+.opts(width=700, height=500, xlabel='k-NN value' , ylabel='Average F1 Accuracy',fontsize={'labels':16,'xticks':12,'yticks':12,'legend':16}, legend_position='bottom_right')
 
 # ## Scatter Plot 2
 # Using seaborn w/ t-test
@@ -107,7 +107,7 @@ best_k = 80
 pairs = [((best_k, best_metric),(k, best_metric)) for k in LE_k_list]
 pairs.remove(((best_k, best_metric),(best_k, best_metric)))
 
-sns.set(rc = {'figure.figsize':(14,7)})
+sns.set(rc={'figure.figsize':(14,7)}, font_scale=2)
 ax    = sns.pointplot(x=x, y=y, hue=hue, data=F1_pointplot_df, capsize=0.1)
 annot = Annotator(ax, pairs, data=F1_pointplot_df, x=x, y=y, hue=hue)
 annot.configure(test='t-test_paired', verbose=2)
@@ -159,7 +159,7 @@ hv.Points(plot_df, kdims=['perplexity value' ,'correlation'], label='correlation
 hv.Points(plot_df, kdims=['perplexity value' ,'cosine'], label='cosine'))*\
 (hv.Area((plot_df['perplexity value' ], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
 hv.Points(plot_df, kdims=['perplexity value' ,'euclidean'], label='euclidean')))\
-.opts(width=700, height=500, xlabel='perplexity value' , ylabel='Average F1 Accuracy',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14})
+.opts(width=700, height=500, xlabel='perplexity value' , ylabel='Average F1 Accuracy',fontsize={'labels':16,'xticks':12,'yticks':12,'legend':16}, legend_position='bottom_right')
 
 # ## Scatter Plot 2
 # Using seaborn w/ t-test
@@ -191,7 +191,7 @@ best_p = 50
 pairs = [((best_p, best_metric),(p, best_metric)) for p in p_list]
 pairs.remove(((best_p, best_metric),(best_p, best_metric)))
 
-sns.set(rc = {'figure.figsize':(14,7)})
+sns.set(rc={'figure.figsize':(14,7)}, font_scale=2)
 ax    = sns.pointplot(x=x, y=y, hue=hue, data=F1_pointplot_df, capsize=0.1)
 annot = Annotator(ax, pairs, data=F1_pointplot_df, x=x, y=y, hue=hue)
 annot.configure(test='t-test_paired', verbose=2)
@@ -243,7 +243,7 @@ hv.Points(plot_df, kdims=['k-NN value' ,'correlation'], label='correlation'))*\
 hv.Points(plot_df, kdims=['k-NN value' ,'cosine'], label='cosine'))*\
 (hv.Area((plot_df['k-NN value' ], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
 hv.Points(plot_df, kdims=['k-NN value' ,'euclidean'], label='euclidean')))\
-.opts(width=700, height=500, xlabel='k-NN value' , ylabel='Average F1 Accuracy',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14}, legend_position='top_left')
+.opts(width=700, height=500, xlabel='k-NN value' , ylabel='Average F1 Accuracy',fontsize={'labels':16,'xticks':12,'yticks':12,'legend':16}, legend_position='top_left')
 
 # ## Scatter Plot 2
 # Using seaborn w/ t-test
@@ -275,7 +275,7 @@ best_k = 200
 pairs = [((best_k, best_metric),(k, best_metric)) for k in UMAP_k_list]
 pairs.remove(((best_k, best_metric),(best_k, best_metric)))
 
-sns.set(rc = {'figure.figsize':(14,7)})
+sns.set(rc={'figure.figsize':(14,7)}, font_scale=2)
 ax    = sns.pointplot(x=x, y=y, hue=hue, data=F1_pointplot_df, capsize=0.1)
 annot = Annotator(ax, pairs, data=F1_pointplot_df, x=x, y=y, hue=hue)
 annot.configure(test='t-test_paired', verbose=2)
@@ -311,7 +311,7 @@ y = 'F1 Accuracy'
 order = ['correlation','cosine','euclidean']
 pairs=[("correlation", "cosine"), ("cosine", "euclidean"), ("euclidean", "correlation")]
 
-sns.set(rc = {'figure.figsize':(9,7)})
+sns.set(rc={'figure.figsize':(9,7)}, font_scale=2)
 ax    = sns.boxplot(x=x, y=y, data=F1_boxplot_df, order=order)
 annot = Annotator(ax, pairs, data=F1_boxplot_df, x=x, y=y, order=order)
 annot.configure(test='t-test_paired', verbose=2)

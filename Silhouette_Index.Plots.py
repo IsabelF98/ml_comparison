@@ -31,7 +31,7 @@ hv.extension('bokeh')
 # +
 # Load Silhouette Index Data
 # --------------------------
-embedding = 'UMAP' # CHOOSE EMBEDDING ('LE', 'TSNE', or 'UMAP')
+embedding = 'LE' # CHOOSE EMBEDDING ('LE', 'TSNE', or 'UMAP')
 drop = 'FullData'
 all_SBJ_SI = {}
 
@@ -80,7 +80,7 @@ hv.Points(plot_df, kdims=[x_axis,'correlation'], label='correlation'))*\
 hv.Points(plot_df, kdims=[x_axis,'cosine'], label='cosine'))*\
 (hv.Area((plot_df[x_axis], plot_df['euclidean +SE'], plot_df['euclidean -SE']), vdims=['euclidean +SE', 'euclidean -SE']).opts(alpha=0.3)*\
 hv.Points(plot_df, kdims=[x_axis,'euclidean'], label='euclidean')))\
-.opts(width=700, height=500, xlabel=x_axis, ylabel='Average Silhouette Index',fontsize={'labels':14,'xticks':12,'yticks':12,'legend':14}, legend_position='top_left')
+.opts(width=700, height=500, xlabel=x_axis, ylabel='Average Silhouette Index',fontsize={'labels':16,'xticks':12,'yticks':12,'legend':16}, legend_position='top_right')
 # -
 # ## Scatter Plot 2
 # Using seaborn w/ t-test
@@ -109,13 +109,13 @@ for SBJ in SBJ_list:
 x = x_axis
 y = 'Silhouette Index'
 hue = 'Distance Metric'
-best_metric = 'euclidean'
-best_k = 160
+best_metric = 'correlation'
+best_k = 80
 
-pairs = [((best_k, best_metric),(k, best_metric)) for k in UMAP_k_list]
+pairs = [((best_k, best_metric),(k, best_metric)) for k in LE_k_list]
 pairs.remove(((best_k, best_metric),(best_k, best_metric)))
 
-sns.set(rc = {'figure.figsize':(14,7)})
+sns.set(rc={'figure.figsize':(14,7)}, font_scale=2)
 ax    = sns.pointplot(x=x, y=y, hue=hue, data=SI_pointplot_df, capsize=0.1)
 annot = Annotator(ax, pairs, data=SI_pointplot_df, x=x, y=y, hue=hue)
 annot.configure(test='t-test_paired', verbose=2)
@@ -129,31 +129,34 @@ plt.legend(loc='upper left', bbox_to_anchor=(1.03, 1))
 
 # Embedding parameters
 # --------------------
-best_k = 160 # best k or p value
-k_index = UMAP_k_list.index(best_k) # k or p value index (change list acording to method)
+best_k = 80 # best k or p value
+k_index = LE_k_list.index(best_k) # k or p value index (change list acording to method)
 
 # Bok plot data frame
 # -------------------
-SI_boxplot_df = pd.DataFrame(columns=['SBJ', 'Distance Metric', 'Silhouette index'])
+SI_boxplot_df = pd.DataFrame(columns=['SBJ', 'Distance Metric', 'Silhouette Index'])
 for SBJ in SBJ_list:
     SI_cor = all_SBJ_SI[SBJ].loc[k_index, 'correlation']
     SI_cos = all_SBJ_SI[SBJ].loc[k_index, 'cosine']
     SI_euc = all_SBJ_SI[SBJ].loc[k_index, 'euclidean']
-    SI_boxplot_df.loc[SI_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'correlation', 'Silhouette index': SI_cor}
-    SI_boxplot_df.loc[SI_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'cosine', 'Silhouette index': SI_cos}
-    SI_boxplot_df.loc[SI_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'euclidean', 'Silhouette index': SI_euc}
+    SI_boxplot_df.loc[SI_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'correlation', 'Silhouette Index': SI_cor}
+    SI_boxplot_df.loc[SI_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'cosine', 'Silhouette Index': SI_cos}
+    SI_boxplot_df.loc[SI_boxplot_df.shape[0]] = {'SBJ': SBJ, 'Distance Metric': 'euclidean', 'Silhouette Index': SI_euc}
 
 # +
 # Box plot with t-test
 # --------------------
 x = 'Distance Metric'
-y = 'Silhouette index'
+y = 'Silhouette Index'
 order = ['correlation','cosine','euclidean']
 pairs=[("correlation", "cosine"), ("cosine", "euclidean"), ("euclidean", "correlation")]
 
-sns.set(rc = {'figure.figsize':(9,7)})
+sns.set(rc={'figure.figsize':(9,7)}, font_scale=2)
 ax    = sns.boxplot(x=x, y=y, data=SI_boxplot_df, order=order)
 annot = Annotator(ax, pairs, data=SI_boxplot_df, x=x, y=y, order=order)
 annot.configure(test='t-test_paired', verbose=2)
 annot.apply_test()
 annot.annotate()
+# -
+
+
