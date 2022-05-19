@@ -31,8 +31,8 @@ hv.extension('bokeh')
 # +
 # Load Silhouette Index Data
 # --------------------------
-embedding = 'LE' # CHOOSE EMBEDDING ('LE', 'TSNE', or 'UMAP')
-drop = 'FullData'
+embedding = 'UMAP' # CHOOSE EMBEDDING ('LE', 'TSNE', or 'UMAP')
+drop = 'Drop15'
 all_SBJ_SI = {}
 
 for SBJ in SBJ_list:

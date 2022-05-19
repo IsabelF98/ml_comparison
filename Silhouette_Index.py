@@ -3,6 +3,7 @@
 
 # This file computes the shilouette index for a given embedding based on task labels
 
+
 import argparse
 import pandas as pd
 import numpy as np
@@ -28,13 +29,19 @@ def run(args):
     # Load embedding and compute SI
     # -----------------------------
     wl_trs = int(wl_sec/tr)
-    if drop == 'FullData':
-        task_df = task_labels(wl_trs, PURE=False)
-    elif drop == 'DropData':
+    if drop == 'DropData':
         task_df = task_labels(wl_trs, PURE=True)
-    print('++ INFO: Task labels loaded')
-    print('         Data shape:',task_df.shape)
-    print(' ')
+    elif drop == 'FullData':
+        task_df = task_labels(wl_trs, PURE=False)
+    elif drop == 'Drop5':
+        task_df = task_labels(wl_trs, PURE=False)
+        task_df = task_df.loc[range(0, task_df.shape[0], 5)]
+    elif drop == 'Drop10':
+        task_df = task_labels(wl_trs, PURE=False)
+        task_df = task_df.loc[range(0, task_df.shape[0], 10)]
+    elif drop == 'Drop15':
+        task_df = task_labels(wl_trs, PURE=False)
+        task_df = task_df.loc[range(0, task_df.shape[0], 15)]
     
     n = 3 # Number of dimensions
     
@@ -44,17 +51,42 @@ def run(args):
         for metric in dist_metric_list:
             SI_list = []
             for k in LE_k_list:
-                file_name = SBJ+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
-                file_path = osp.join(PRJDIR,'derivatives','LE',file_name)
-                embed_df  = pd.read_csv(file_path)
-                if drop == 'FullData':
-                    drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
-                    drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
-                    drop_task_df = task_df.drop(drop_index).reset_index(drop=True)
-                    silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
-                elif drop == 'DropData':
-                    silh_idx = silhouette_score(embed_df[['1_norm', '2_norm', '3_norm']], task_df['Task'].values)
-                SI_list.append(silh_idx)
+                try:
+                    file_name = SBJ+'_LE_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
+                    file_path = osp.join(PRJDIR,'derivatives','LE',file_name)
+                    embed_df  = pd.read_csv(file_path)
+                    print('++ INFO Data shape:', embed_df.shape)
+                    print(' ')
+                    if drop == 'FullData':
+                        drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
+                        drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+                        drop_task_df = task_df.drop(drop_index).reset_index(drop=True)
+                        silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
+                    elif drop == 'Drop5':
+                        embed_df.index = task_df.index
+                        drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
+                        drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+                        drop_task_df  = task_df.drop(drop_index).reset_index(drop=True)
+                        silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
+                    elif drop == 'Drop10':
+                        embed_df.index = task_df.index
+                        drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
+                        drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+                        drop_task_df  = task_df.drop(drop_index).reset_index(drop=True)
+                        silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
+                    elif drop == 'Drop15':
+                        embed_df.index = task_df.index
+                        drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
+                        drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+                        drop_task_df  = task_df.drop(drop_index).reset_index(drop=True)
+                        silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
+                    elif drop == 'DropData':
+                        silh_idx = silhouette_score(embed_df[['1_norm', '2_norm', '3_norm']], task_df['Task'].values)
+                    SI_list.append(silh_idx)
+                except:
+                    print('++ ERROR: This embedding does not exist for k', k)
+                    print(' ')
+                    SI_list.append(np.nan)
             SI_df[metric] = SI_list
             print('++ INFO: SIs computed for',metric)
                 
@@ -63,17 +95,42 @@ def run(args):
         for metric in dist_metric_list:
             SI_list = []
             for p in p_list:
-                file_name = SBJ+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
-                file_path = osp.join(PRJDIR,'derivatives','TSNE',file_name)
-                embed_df  = pd.read_csv(file_path)  
-                if drop == 'FullData':
-                    drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
-                    drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
-                    drop_task_df = task_df.drop(drop_index).reset_index(drop=True)
-                    silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
-                elif drop == 'DropData':
-                    silh_idx = silhouette_score(embed_df[['1_norm', '2_norm', '3_norm']], task_df['Task'].values)
-                SI_list.append(silh_idx)
+                try:
+                    file_name = SBJ+'_TSNE_embedding_wl'+str(wl_sec).zfill(3)+'_p'+str(p).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
+                    file_path = osp.join(PRJDIR,'derivatives','TSNE',file_name)
+                    embed_df  = pd.read_csv(file_path)
+                    print('++ INFO Data shape:', embed_df.shape)
+                    print(' ')
+                    if drop == 'FullData':
+                        drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
+                        drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+                        drop_task_df = task_df.drop(drop_index).reset_index(drop=True)
+                        silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
+                    elif drop == 'Drop5':
+                        embed_df.index = task_df.index
+                        drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
+                        drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+                        drop_task_df  = task_df.drop(drop_index).reset_index(drop=True)
+                        silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
+                    elif drop == 'Drop10':
+                        embed_df.index = task_df.index
+                        drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
+                        drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+                        drop_task_df  = task_df.drop(drop_index).reset_index(drop=True)
+                        silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
+                    elif drop == 'Drop15':
+                        embed_df.index = task_df.index
+                        drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
+                        drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+                        drop_task_df  = task_df.drop(drop_index).reset_index(drop=True)
+                        silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
+                    elif drop == 'DropData':
+                        silh_idx = silhouette_score(embed_df[['1_norm', '2_norm', '3_norm']], task_df['Task'].values)
+                    SI_list.append(silh_idx)
+                except:
+                    print('++ ERROR: This embedding does not exist for p', p)
+                    print(' ')
+                    SI_list.append(np.nan)
             SI_df[metric] = SI_list
             print('++ INFO: SIs computed for',metric)
             
@@ -82,17 +139,42 @@ def run(args):
         for metric in dist_metric_list:
             SI_list = []
             for k in UMAP_k_list:
-                file_name = SBJ+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
-                file_path = osp.join(PRJDIR,'derivatives','UMAP',file_name)
-                embed_df  = pd.read_csv(file_path)  
-                if drop == 'FullData':
-                    drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
-                    drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
-                    drop_task_df = task_df.drop(drop_index).reset_index(drop=True)
-                    silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
-                elif drop == 'DropData':
-                    silh_idx = silhouette_score(embed_df[['1_norm', '2_norm', '3_norm']], task_df['Task'].values)
-                SI_list.append(silh_idx)
+                try:
+                    file_name = SBJ+'_UMAP_embedding_wl'+str(wl_sec).zfill(3)+'_k'+str(k).zfill(3)+'_n'+str(n).zfill(2)+'_'+metric+'_'+drop+'.csv'
+                    file_path = osp.join(PRJDIR,'derivatives','UMAP',file_name)
+                    embed_df  = pd.read_csv(file_path)
+                    print('++ INFO Data shape:', embed_df.shape)
+                    print(' ')
+                    if drop == 'FullData':
+                        drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
+                        drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+                        drop_task_df = task_df.drop(drop_index).reset_index(drop=True)
+                        silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
+                    elif drop == 'Drop5':
+                        embed_df.index = task_df.index
+                        drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
+                        drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+                        drop_task_df  = task_df.drop(drop_index).reset_index(drop=True)
+                        silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
+                    elif drop == 'Drop10':
+                        embed_df.index = task_df.index
+                        drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
+                        drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+                        drop_task_df  = task_df.drop(drop_index).reset_index(drop=True)
+                        silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
+                    elif drop == 'Drop15':
+                        embed_df.index = task_df.index
+                        drop_index    = task_df.index[task_df['Task'] == 'Inbetween']
+                        drop_embed_df = embed_df.drop(drop_index).reset_index(drop=True)
+                        drop_task_df  = task_df.drop(drop_index).reset_index(drop=True)
+                        silh_idx = silhouette_score(drop_embed_df[['1_norm', '2_norm', '3_norm']], drop_task_df['Task'].values)
+                    elif drop == 'DropData':
+                        silh_idx = silhouette_score(embed_df[['1_norm', '2_norm', '3_norm']], task_df['Task'].values)
+                    SI_list.append(silh_idx)
+                except:
+                    print('++ ERROR: This embedding does not exist for k', k)
+                    print(' ')
+                    SI_list.append(np.nan)
             SI_df[metric] = SI_list
             print('++ INFO: SIs computed for',metric)
             
