@@ -39,4 +39,3 @@ for SBJ in SBJ_list:
             os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} embedding={embedding} drop={drop}; sh ./Silhouette_Index.sh" >> ./Silhouette_Index.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, embedding=embedding, drop=drop))
 # -
 
-

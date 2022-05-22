@@ -26,6 +26,19 @@ def run(args):
     print('         drop:  ',drop)
     print(' ')
     
+    # Extra hyperparameter values for dropped data
+    # --------------------------------------------
+    if drop == 'Drop5' or drop == 'Drop10' or drop == 'Drop15':
+        global LE_k_list
+        global p_list
+        global UMAP_k_list
+        LE_k_list   += [4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34]
+        p_list      += [4,6,8,12,13,14,16,17,18,19,21,22,23,24]
+        UMAP_k_list += [3,4,6,7,8,9,11,12,13,14,16,17,18,19,21,22,23,24]
+        LE_k_list.sort()
+        p_list.sort()
+        UMAP_k_list.sort()
+    
     # Load embedding and compute SI
     # -----------------------------
     wl_trs = int(wl_sec/tr)
@@ -33,6 +46,7 @@ def run(args):
         task_df = task_labels(wl_trs, PURE=True)
     elif drop == 'FullData':
         task_df = task_labels(wl_trs, PURE=False)
+
     elif drop == 'Drop5':
         task_df = task_labels(wl_trs, PURE=False)
         task_df = task_df.loc[range(0, task_df.shape[0], 5)]

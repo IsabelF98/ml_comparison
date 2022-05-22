@@ -35,6 +35,16 @@ embedding = 'UMAP' # CHOOSE EMBEDDING ('LE', 'TSNE', or 'UMAP')
 drop = 'Drop15'
 all_SBJ_SI = {}
 
+# Extra hyperparameter values for dropped data
+# --------------------------------------------
+if drop == 'Drop5' or drop == 'Drop10' or drop == 'Drop15':
+    LE_k_list   += [4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34]
+    p_list      += [4,6,8,12,13,14,16,17,18,19,21,22,23,24]
+    UMAP_k_list += [3,4,6,7,8,9,11,12,13,14,16,17,18,19,21,22,23,24]
+    LE_k_list.sort()
+    p_list.sort()
+    UMAP_k_list.sort()
+
 for SBJ in SBJ_list:
     file_name = SBJ+'_Silh_Idx_'+embedding+'_wl'+str(wl_sec).zfill(3)+'_'+drop+'.csv'
     file_path = osp.join(PRJDIR,'derivatives','Silh_Idx',file_name)
@@ -51,15 +61,20 @@ for SBJ in SBJ_list:
 avg_group_SI = pd.concat([all_SBJ_SI[SBJ] for SBJ in SBJ_list]).groupby(level=0).mean() # Average
 sem_group_SI = pd.concat([all_SBJ_SI[SBJ] for SBJ in SBJ_list]).groupby(level=0).sem()  # Standerd Error
 
+# Drop rows with nan value
+# ------------------------
+avg_group_SI = avg_group_SI.dropna()
+sem_group_SI = sem_group_SI.dropna()
+
 # +
 # Plot data frame
 # ---------------
 if embedding == 'LE':
-    plot_df = pd.DataFrame(LE_k_list,columns=['k-NN value'])  
+    plot_df = pd.DataFrame(avg_group_SI['Unnamed: 0'].values,columns=['k-NN value'])  
 elif embedding == 'TSNE':
-    plot_df = pd.DataFrame(p_list,columns=['perplexity value'])
+    plot_df = pd.DataFrame(avg_group_SI['Unnamed: 0'].values,columns=['perplexity value'])
 elif embedding == 'UMAP':
-    plot_df = pd.DataFrame(UMAP_k_list,columns=['k-NN value'])
+    plot_df = pd.DataFrame(avg_group_SI['Unnamed: 0'].values,columns=['k-NN value'])
     
 for metric in ['correlation','cosine','euclidean']:
     plot_df[metric] = avg_group_SI[metric].copy()
