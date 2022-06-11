@@ -1,8 +1,16 @@
 #! /usr/bin/env python
 # Isabel Fernandez 2/25/2022
 
-# This file computes the shilouette index for a given embedding based on task labels
-
+# This file computes the shilouette index (SI) for a given embedding based on task labels
+# 1. If using DropX data add extra k or perplexity values
+# 2. Creat task label data frame
+# For a given embedding:
+# 3. Load embedding for a given distance metric and k or perplexity value
+# 4. Drop any inbetween task windows
+# 5. Compute SI of the embedding
+# 6. Save it to the subject SI data frame
+# 7. Do steps 3 to 6 for reach distence metric and k or perplexity value combination
+# 8. Save subject SI data frame (distace metric X k or perplexity value) as csv file
 
 import argparse
 import pandas as pd
@@ -57,7 +65,7 @@ def run(args):
         task_df = task_labels(wl_trs, PURE=False)
         task_df = task_df.loc[range(0, task_df.shape[0], 15)]
     
-    n = 3 # Number of dimensions
+    n = 3 # Number of dimensions is always 3 for SI
     
     dist_metric_list = ['correlation', 'cosine', 'euclidean']
     if embedding == 'LE':
@@ -100,7 +108,7 @@ def run(args):
                 except:
                     print('++ ERROR: This embedding does not exist for k', k)
                     print(' ')
-                    SI_list.append(np.nan)
+                    SI_list.append(np.nan) # add nan value for non existant embedding (might be too kigh a k values)
             SI_df[metric] = SI_list
             print('++ INFO: SIs computed for',metric)
                 
@@ -144,7 +152,7 @@ def run(args):
                 except:
                     print('++ ERROR: This embedding does not exist for p', p)
                     print(' ')
-                    SI_list.append(np.nan)
+                    SI_list.append(np.nan) # add nan value for non existant embedding (might be too kigh a perplexity values)
             SI_df[metric] = SI_list
             print('++ INFO: SIs computed for',metric)
             
@@ -188,7 +196,7 @@ def run(args):
                 except:
                     print('++ ERROR: This embedding does not exist for k', k)
                     print(' ')
-                    SI_list.append(np.nan)
+                    SI_list.append(np.nan) # add nan value for non existant embedding (might be too kigh a k values)
             SI_df[metric] = SI_list
             print('++ INFO: SIs computed for',metric)
             

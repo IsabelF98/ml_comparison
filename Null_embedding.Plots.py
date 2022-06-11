@@ -15,11 +15,10 @@
 
 # # Null Embedding Plots
 #
-# This notebook walks through the step for plotting the silhouette index (SI) bar graphs of the original embeddings v.s. the null embeddings for each of the three techniques. The embeddings that are used will be those that have the highest silhouette index for each techniques based on the hyperparameters.
-#
-# * Laplacain Eigenmap: k=50, metric=correlation
-# * TSNE: p=50, metric=correlation
-# * UMAP: k=130, metric=correlation
+# * This notebook creates bar plots comparing SI and F1 accuracy values for both null data and original data, for all three techniques. The SI and F1 plots are seperate.
+# * For a given set of hyperparamenters (the "best" for each technique) we compute either the SI or F1 accuracy value for all subjects and plot the average as a bar plot.
+# * Seaborn is used to plot the barplots with t-statistic stars.
+# * The resluts of this notebook can be found in Null_Data.ppts (DropData) and Null_Data_V2.pptx (FullData) on Teams.
 
 import pandas as pd
 import numpy as np
@@ -137,13 +136,15 @@ def group_F1(data_dict, label_df, label, n, full_data):
     return F1_df
 
 
+# Hyperparameters for all techniques
 n         = 3
 drop      = 'FullData'
-full_data = True
+full_data = True # If FullData True, if DropData Flase
 
 # ## Laplacian Eigenmap
 # ***
 
+# LE hyperparameters
 LE_k = 80
 metric = 'correlation'
 
@@ -224,6 +225,7 @@ print('         Data shape', null2_LE_F1_df.shape)
 # ## TSNE
 # ***
 
+# TSNE hyperparameters
 p = 70
 metric = 'correlation'
 
@@ -304,6 +306,7 @@ print('         Data shape', null2_TSNE_F1_df.shape)
 # ## UMAP
 # ***
 
+# UMAP hyperparameters
 UMAP_k = 160
 metric = 'euclidean'
 

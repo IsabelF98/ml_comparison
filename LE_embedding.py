@@ -3,7 +3,7 @@
 
 # This file computes the embeddings using the Laplacain Eigenmap algorithum
 # 1) Load sliding window correlation matrix
-# 2) Drop inbetween task windows (if not full data)
+# 2) Drop inbetween task windows (if not FullData or DropX)
 # 3) Compute embedding
 # 4) Save file
 

@@ -15,7 +15,7 @@
 
 # # Drop windows in SWC matrix
 #
-# This notebook creates the swarm file to drop windows in SWC matrix.
+# This notebook creates the swarm file to drop windows (every 5, 10, 15) in SWC matrix.
 
 import os
 import os.path as osp

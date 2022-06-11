@@ -35,9 +35,9 @@ n = 3 # number of dimensions
 
 os.system('echo "#swarm -f ./TSNE_embedding.SWARM.sh -g 30 -t 30 --time 8:00:00 --logdir ../logs/TSNE_embedding.logs" > ./TSNE_embedding.SWARM.sh')
 for SBJ in SBJ_list:
-    for p in [4,6,8,12,13,14,16,17,18,19,21,22,23,24]:
-        for metric in ['correlation', 'cosine', 'euclidean']:
-            for drop in ['Drop5', 'Drop10', 'Drop15']:
+    for p in [4,6,8,12,13,14,16,17,18,19,21,22,23,24]: # perplexity values
+        for metric in ['correlation', 'cosine', 'euclidean']: # distance metrics
+            for drop in ['Drop5', 'Drop10', 'Drop15']: # Type of data (FullData: all windows, DropData: only pure windows, DropX: keep every X window)
                 os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} p={p} n={n} metric={metric} drop={drop}; sh ./TSNE_embedding.sh" >> ./TSNE_embedding.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, p=p, n=n, metric=metric, drop=drop))
 # -
 

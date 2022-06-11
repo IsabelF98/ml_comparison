@@ -1,7 +1,19 @@
 #! /usr/bin/env python
 # Isabel Fernandez 4/5/2022
 
-# This file computes the Logistic Regression coefficients and classification report for a given embedding
+# This file computes the Logistic Regression (LR) coefficients and classification report for a given embedding
+# 1. Set training and testing data set index bounds (hard coaded)
+# 2. Load task laels
+# 3. Create LR solver
+# For chosen technique:
+# 4. Load embedding
+# 5. Drop inbetween windows (pure windows only) if using FullData embedding
+# 6. Split data into training and testing set
+# 7. Apply LR to train data
+# 8. Save LR coeeficients as csv file
+# 9. Predict test task labels with LR
+# 10. Compute Classification Report for test labels
+# 11. Save LR class report as csv file
 
 import argparse
 import pandas as pd

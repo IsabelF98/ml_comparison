@@ -4,9 +4,9 @@
 # This file computes embeddings using each techniques (LE, TSNE, UMAP) on null data
 # 1) Load data (either ROI time series or SWC matrix)
 # 2) Compute null data (shuffle or phase)
-# 3) Compute SWC matrix if ROI time series
-# 4) Drop inbetween task windows
-# 5) Compute embeddings
+# 3) Compute SWC matrix (if ROI time series)
+# 4) Drop inbetween task windows (if DropData)
+# 5) Compute all three embeddings
 # 6) Save files
 
 import argparse

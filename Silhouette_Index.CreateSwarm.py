@@ -34,8 +34,8 @@ os.system('if [ ! -d ../derivatives/Silh_Idx ]; then mkdir ../derivatives/Silh_I
 os.system('echo "#swarm -f ./Silhouette_Index.SWARM.sh -g 30 -t 30 --time 8:00:00 --logdir ../logs/Silhouette_Index.logs" > ./Silhouette_Index.SWARM.sh')
 
 for SBJ in SBJ_list:
-    for embedding in ['LE', 'TSNE', 'UMAP']:
-        for drop in ['Drop5', 'Drop10', 'Drop15']:
+    for embedding in ['LE', 'TSNE', 'UMAP']: # Embedding technique
+        for drop in ['Drop5', 'Drop10', 'Drop15']: # Type of data (FullData: all windows, DropData: only pure windows, DropX: keep every X window)
             os.system('echo "export PRJDIR={PRJDIR} conda_loc={conda_loc} conda_env={conda_env} SBJ={SBJ} wl_sec={wl_sec} tr={tr} embedding={embedding} drop={drop}; sh ./Silhouette_Index.sh" >> ./Silhouette_Index.SWARM.sh'.format(PRJDIR=PRJDIR, conda_loc=conda_loc, conda_env=conda_env, SBJ=SBJ, wl_sec=wl_sec, tr=tr, embedding=embedding, drop=drop))
 # -
 

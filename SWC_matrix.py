@@ -1,8 +1,7 @@
 #! /usr/bin/env python
 # Isabel Fernandez 2/23/2022
 
-# This file computes the sliding window correlation (SWC) matrix which we use as
-# input for the different manifold learning techniques.
+# This file computes the sliding window correlation (SWC) matrix
 # 1) Load ROI time series
 # 2) Compute sliding window correlation matrix
 # 3) Save SWC matrix as csv file

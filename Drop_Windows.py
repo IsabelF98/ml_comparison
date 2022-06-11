@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # Isabel Fernandez 5/4/2022
 
-# This file computes the embeddings using the Laplacain Eigenmap algorithum
+# This drops windows in an SWC matrix to remove autocorrelation
 # 1) Load sliding window correlation matrix
 # 2) Drop every n windows
 # 3) Save new SWC matrix

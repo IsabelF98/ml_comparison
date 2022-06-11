@@ -15,7 +15,10 @@
 
 # # Logistic Regression Plots
 #
-# This notebook is for creating the plots of Logistic Regression accuracy values for each manifold learning technique.
+# * This notebook is for plotting Logistic Regression accuracy values for each manifold learning technique.
+# * For each technqiues a scatter plot is created. One that with holoviews and one with seabors (with t-test stars).
+# * A box plot is also created to compare distance metrix for a given ste of hyperparameters.
+# * The results of these plots can be found in Logistic_Regression_Plots.pptx (DropData) and Logistic_Regression_Plots_V2.pptx (FullData) on Teams.
 
 import pandas as pd
 import numpy as np
@@ -28,9 +31,9 @@ import holoviews as hv
 import panel as pn
 hv.extension('bokeh')
 
-dist_metric_list = ['correlation', 'cosine', 'euclidean']
-n = 3
-drop = 'FullData'
+dist_metric_list = ['correlation', 'cosine', 'euclidean'] # all distance metrics
+n = 3 # number of dimensions
+drop = 'FullData' # Type of data (FullData: all windows, DropData: only pure windows)
 
 # ## Laplacian Eigenmap
 # ***

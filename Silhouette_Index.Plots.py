@@ -15,7 +15,10 @@
 
 # # Silhouette Index Plots
 #
-# This notebook is for creating the plots of silhouette index values for each manifold learning technique.
+# * This notebook is for plotting silhouette index (SI) values for a given manifold learning technique.
+# * For each technqiues a scatter plot is created. One that with holoviews and one with seabors (with t-test stars).
+# * A box plot is also created to compare distance metrix for a given ste of hyperparameters.
+# * The results of these plots can be found in Silhouette_Index_Plots.pptx (DropData) and Silhouette_Index_Plots_V2.pptx (FullData) as well as Dropping_Windows.pptx (DropX) on Teams.
 
 import pandas as pd
 import numpy as np
@@ -29,11 +32,8 @@ import panel as pn
 hv.extension('bokeh')
 
 # +
-# Load Silhouette Index Data
-# --------------------------
 embedding = 'UMAP' # CHOOSE EMBEDDING ('LE', 'TSNE', or 'UMAP')
-drop = 'Drop15'
-all_SBJ_SI = {}
+drop = 'Drop15' # Type of data (FullData: all windows, DropData: only pure windows, DropX: keep every X window)
 
 # Extra hyperparameter values for dropped data
 # --------------------------------------------
@@ -45,6 +45,9 @@ if drop == 'Drop5' or drop == 'Drop10' or drop == 'Drop15':
     p_list.sort()
     UMAP_k_list.sort()
 
+# Load Silhouette Index Data
+# --------------------------
+all_SBJ_SI = {}
 for SBJ in SBJ_list:
     file_name = SBJ+'_Silh_Idx_'+embedding+'_wl'+str(wl_sec).zfill(3)+'_'+drop+'.csv'
     file_path = osp.join(PRJDIR,'derivatives','Silh_Idx',file_name)
