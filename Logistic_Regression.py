@@ -31,7 +31,7 @@ def run(args):
     n         = args.n
     metric    = args.metric
     embedding = args.embedding
-    drop   = args.drop
+    drop      = args.drop
     print(' ')
     print('++ INFO: Run information')
     print('         SBJ:      ',SBJ)
